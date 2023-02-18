@@ -1,4 +1,4 @@
-*.vs
-Source/RunAndGun/.vs/*
-Source/RunAndGun/obj/Debug/*
-1.1/Source/RunAndGun/obj/Debug/*
+
+Source/obj/
+
+Source/Source.code-workspace
