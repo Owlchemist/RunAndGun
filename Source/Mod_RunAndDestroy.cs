@@ -3,14 +3,14 @@ using System;
 using System.Collections.Generic;
 using Verse;
 using UnityEngine;
-using static RunAndDestroy.ModSettings_RunAndDestroy;
+using static RunGunAndDestroy.ModSettings_RunAndDestroy;
 
-namespace RunAndDestroy
+namespace RunGunAndDestroy
 {
 	[StaticConstructorOnStartup]
 	public static class Setup
 	{
-		public static ThingDef[] allWeapons; //Only used during setup and for the mod options UI
+		public static ThingDef[] allWeapons;
 	
 		static Setup()
 		{
@@ -19,26 +19,62 @@ namespace RunAndDestroy
 
             heavyWeaponsCache = new HashSet<ushort>();
 			forbiddenWeaponsCache = new HashSet<ushort>();
+			if (heavyWeapons == null) heavyWeapons = new List<string>();
+			if (forbiddenWeapons == null) forbiddenWeapons = new List<string>();
 
 			var workingList = new List<ThingDef>();
 			var length = DefDatabase<ThingDef>.DefCount;
 			for (int i = 0; i < length; i++)
 			{
 				var def = DefDatabase<ThingDef>.defsList[i];
-				if (def.equipmentType == EquipmentType.Primary && !def.weaponTags.NullOrEmpty<string>() && !def.destroyOnDrop)
+				if (def.equipmentType == EquipmentType.Primary && !def.weaponTags.NullOrEmpty<string>() && !def.destroyOnDrop && def.IsWeaponUsingProjectiles)
 				{
 					workingList.Add(def);
-					if (def.BaseMass > weightLimitFilter) heavyWeaponsCache.Add(def.shortHash);
+					#region Heavy weapons
+					//Check weight (3.4 usually)
+					bool setting = def.BaseMass > weightLimitFilterDefault;
+					//Check for player rule inversion
+					if (heavyWeapons.Contains(def.defName)) setting = !setting;
+					//Add if true
+					if (setting) heavyWeaponsCache.Add(def.shortHash);
+					#endregion
+
+					#region Forbidden weapons
+					//Check for extension
+					setting = def.HasModExtension<WeaponForbidden>();
+					//Check for player rule inversion
+					if (forbiddenWeapons.Contains(def.defName)) setting = !setting;
+					//Add if true
+					if (setting) forbiddenWeaponsCache.Add(def.shortHash);
+					#endregion
 				}
 			}
 			workingList.SortBy(x => x.label);
 			allWeapons = workingList.ToArray();
 		}
+
+		public static void CheckInvesions()
+		{
+			//Reset
+			heavyWeapons = new List<string>();
+			forbiddenWeapons = new List<string>();
+
+			//Check for abnormalities
+			foreach (var weapon in allWeapons)
+			{
+				if (weapon.BaseMass > weightLimitFilterDefault && !heavyWeaponsCache.Contains(weapon.shortHash)) heavyWeapons.Add(weapon.defName);
+				else if (weapon.BaseMass <= weightLimitFilterDefault && heavyWeaponsCache.Contains(weapon.shortHash)) heavyWeapons.Add(weapon.defName);
+
+				bool hasComp = weapon.HasModExtension<WeaponForbidden>();
+				if (hasComp && !forbiddenWeaponsCache.Contains(weapon.shortHash)) forbiddenWeapons.Add(weapon.defName);
+				else if (!hasComp && forbiddenWeaponsCache.Contains(weapon.shortHash)) forbiddenWeapons.Add(weapon.defName);
+			}
+		}
 	}
 	
-	public class Mod_GiddyUp : Mod
+	public class Mod_RunAndDestroy : Mod
 	{
-		public Mod_GiddyUp(ModContentPack content) : base(content)
+		public Mod_RunAndDestroy(ModContentPack content) : base(content)
 		{
 			base.GetSettings<ModSettings_RunAndDestroy>();
 		}
@@ -66,11 +102,20 @@ namespace RunAndDestroy
 
 				options.CheckboxLabeled("RG_EnableRGForAI_Title".Translate(), ref enableForAI, "RG_EnableRGForAI_Description".Translate());
 				
-				options.Label("RG_EnableRGForFleeChance_Title".Translate("0", "100", "50", enableForFleeChance.ToString()), -1f, "RG_EnableRGForFleeChance_Description".Translate());
-				enableForFleeChance = (int)options.Slider(enableForFleeChance, 0f, 100f);
+				if (enableForAI)
+				{
+					options.Label("RG_AccuracyPenalty_Title".Translate("0", "100", "65", Math.Round(accuracyPenalty * 100).ToString()), -1f, "RG_AccuracyPenalty_Description".Translate());
+					accuracyPenalty = options.Slider(accuracyPenalty, 0f, 1f);
+				}
 
-				options.Label("RG_AccuracyPenalty_Title".Translate("0", "100", "35", accuracyPenalty.ToString()), -1f, "RG_AccuracyPenalty_Description".Translate());
-				accuracyPenalty = (int)options.Slider(accuracyPenalty, 0f, 100f);
+				options.Label("RG_AccuracyPenaltyPlayer_Title".Translate("0", "100", "65", Math.Round(accuracyPenalty * 100).ToString()), -1f, "RG_AccuracyPenaltyPlayer_Description".Translate());
+				accuracyPenaltyPlayer = options.Slider(accuracyPenaltyPlayer, 0f, 1f);
+				
+				if (enableForAI)
+				{
+					options.Label("RG_EnableRGForFleeChance_Title".Translate("0", "100", "50", enableForFleeChance.ToString()), -1f, "RG_EnableRGForFleeChance_Description".Translate());
+					enableForFleeChance = (int)options.Slider(enableForFleeChance, 0f, 100f);
+				}
 
 				options.Label("RG_MovementPenaltyHeavy_Title".Translate("0", "100", "70", movementPenaltyHeavy.ToString()), -1f, "RG_MovementPenaltyHeavy_Description".Translate());
 				movementPenaltyHeavy = (int)options.Slider(movementPenaltyHeavy, 0f, 100f);
@@ -102,7 +147,7 @@ namespace RunAndDestroy
 					}
 					else
 					{
-						options.Label("GUC_DrawBehavior_Description".Translate());
+						options.Label("RG_Forbidden_Weapons".Translate());
 					}
 				options.End();
 				//========Scroll area=========
@@ -124,7 +169,7 @@ namespace RunAndDestroy
 		{            
 			try
 			{
-				//...
+				Setup.CheckInvesions();
 			}
 			catch (System.Exception ex)
 			{
@@ -138,25 +183,31 @@ namespace RunAndDestroy
 		public override void ExposeData()
 		{
 			Scribe_Values.Look(ref enableForAI, "enableForAI", true);
+			Scribe_Values.Look(ref enableForAnimals, "enableForAnimals");
 			Scribe_Values.Look(ref enableForFleeChance, "enableForFleeChance", 50);
-			Scribe_Values.Look(ref accuracyPenalty, "accuracyPenalty", 35);
+			Scribe_Values.Look(ref accuracyPenalty, "accuracyPenalty", 0.65f);
+			Scribe_Values.Look(ref accuracyPenaltyPlayer, "accuracyPenaltyPlayer", 0.65f);
 			Scribe_Values.Look(ref movementPenaltyHeavy, "movementPenaltyHeavy", 70);
 			Scribe_Values.Look(ref movementPenaltyLight, "movementPenaltyLight", 35);
-			//Scribe_Collections.Look(ref heavyWeaponsCache, "heavyHeavies", LookMode.Value);
-			//Scribe_Collections.Look(ref forbiddenWeaponsCache, "weaponForbidder", LookMode.Value);
+			Scribe_Collections.Look(ref heavyWeapons, "heavyWeapons", LookMode.Value);
+			Scribe_Collections.Look(ref forbiddenWeapons, "forbiddenWeapons", LookMode.Value);
 			
 			base.ExposeData();
 		}
-		public static bool enableForAI = true;
-		public static int accuracyPenalty = 35,
-			movementPenaltyHeavy = 70,
+		public static bool enableForAI = true, enableForAnimals;
+		public static int movementPenaltyHeavy = 70,
 			movementPenaltyLight = 35,
 			enableForFleeChance = 50;
+		public static float accuracyPenalty = 0.65f,
+			accuracyPenaltyPlayer = 0.65f;
         public static HashSet<ushort> heavyWeaponsCache,
 			 forbiddenWeaponsCache;
+		public static List<string> heavyWeapons,
+			 forbiddenWeapons;
         
 		#region settings UI
-		public static float weightLimitFilter = 3.4f;
+		public static float weightLimitFilter = weightLimitFilterDefault;
+		public const float weightLimitFilterDefault = 3.4f;
 		public static Vector2 scrollPos;
 		public static SelectedTab selectedTab = SelectedTab.runAndGun;
 		public enum SelectedTab { runAndGun, heavyWeapons, forbiddenWeapons, searchAndDestroy };

@@ -1,0 +1,53 @@
+﻿using System.Collections.Generic;
+using HarmonyLib;
+using Verse;
+using Verse.AI;
+using RimWorld;
+
+namespace RunGunAndDestroy
+{
+	[HarmonyPatch(typeof(JobDriver), nameof(JobDriver.SetupToils))]
+	static class Patch_SetupToils
+	{
+		static TargetScanFlags targetScanFlags = TargetScanFlags.NeedLOSToPawns | TargetScanFlags.NeedLOSToNonPawns | TargetScanFlags.NeedThreat;
+		static void Postfix(JobDriver __instance)
+		{
+			if(__instance is not JobDriver_Goto jobDriver || !__instance.pawn.RunsAndGuns() || __instance.toils.Count == 0)
+			{
+				return;
+			}
+			
+			__instance.toils[0].AddPreTickAction(delegate
+			{
+				Pawn pawn = jobDriver.pawn;
+				if (pawn.IsHashIntervalTick(10) &&  
+					(pawn.Drafted || !pawn.IsColonist) && !pawn.Downed && 
+					!pawn.HasAttachment(ThingDefOf.Fire))
+				{
+					CheckForAutoAttack(pawn);
+				}
+			});
+		}
+		static void CheckForAutoAttack(Pawn pawn)
+		{
+			if ((pawn.story == null || !pawn.story.DisabledWorkTagsBackstoryAndTraits.HasFlag(WorkTags.Violent)) &&
+				pawn.Faction != null &&
+				!(pawn.stances.curStance is Stance_RunAndGun) &&
+				(pawn.drafter == null || pawn.drafter.FireAtWill))
+			{
+				Verb verb = pawn.TryGetAttackVerb(null);
+				if (verb != null)
+				{
+					if (verb.IsIncendiary_Ranged()) targetScanFlags |= TargetScanFlags.NeedNonBurning;
+					
+					Thing thing = (Thing)AttackTargetFinder.BestShootTargetFromCurrentPosition(pawn, targetScanFlags);
+					if (thing != null && !(verb.IsMeleeAttack && pawn.CanReachImmediate(thing, PathEndMode.Touch))) //Don't allow melee attacks, but take into account ranged animals or dual wield users
+					{
+						pawn.TryStartAttack(thing);
+						return;
+					}
+				}
+			}
+		}
+	}
+}

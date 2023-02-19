@@ -1,4 +1,6 @@
-﻿using Verse;
+﻿/*
+using Verse;
+using System.Linq;
 using Settings = RunAndDestroy.ModSettings_RunAndDestroy;
 
 namespace RunAndDestroy
@@ -31,7 +33,8 @@ namespace RunAndDestroy
 
         public override void CompTickRare()
         {
-            if (Settings.forbiddenWeaponsCache.Contains(pawn.equipment?.Primary?.def.shortHash ?? 0))
+            if (pawn.equipment == null || pawn.equipment.Primary == null || 
+                Settings.forbiddenWeaponsCache.Contains(pawn.equipment.Primary.def.shortHash) || !Setup.allWeapons.Contains(pawn.equipment.Primary.def))
             {
                 isEnabled = false;
             }
@@ -41,13 +44,15 @@ namespace RunAndDestroy
         {
             base.Initialize(props);
             Pawn pawn = parent as Pawn;
+            //if (pawn.RaceProps.Animal) parent.comps.Remove(this); //Self destruct
             if (!pawn.IsColonist && Settings.enableForAI) isEnabled = true;
         }
 
         public override void PostExposeData()
         {
             base.PostExposeData();
-            Scribe_Values.Look(ref isEnabled, "isEnabled");
+            Scribe_Values.Look(ref isEnabled, "fdbfdgfdgfd");
         }
     }
 }
+*/

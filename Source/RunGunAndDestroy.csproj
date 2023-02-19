@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<Product>Run and Destory</Product>
+		<Product>Run Gun and Destroy</Product>
 		<AssemblyVersion>2.0</AssemblyVersion>
 		<Version>1.4</Version>
 		<Copyright>$([System.DateTime]::Now.ToString('yyyy'))</Copyright>

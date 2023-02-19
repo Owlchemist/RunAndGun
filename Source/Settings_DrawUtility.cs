@@ -2,10 +2,10 @@ using Verse;
 using UnityEngine;
 using Verse.Sound;
 using RimWorld;
-using static RunAndDestroy.ModSettings_RunAndDestroy;
-using static RunAndDestroy.Setup;
+using static RunGunAndDestroy.ModSettings_RunAndDestroy;
+using static RunGunAndDestroy.Setup;
  
-namespace RunAndDestroy
+namespace RunGunAndDestroy
 {
     public static class OptionsDrawUtility
 	{

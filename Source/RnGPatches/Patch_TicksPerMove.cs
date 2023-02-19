@@ -1,9 +1,9 @@
 ﻿using System;
 using Verse;
 using HarmonyLib;
-using Settings = RunAndDestroy.ModSettings_RunAndDestroy;
+using Settings = RunGunAndDestroy.ModSettings_RunAndDestroy;
 
-namespace RunAndDestroy
+namespace RunGunAndDestroy
 {
     [HarmonyPatch(typeof(Pawn), nameof(Pawn.TicksPerMove))]
     static class Patch_TicksPerMove

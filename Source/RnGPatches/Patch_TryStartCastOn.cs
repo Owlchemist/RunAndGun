@@ -3,8 +3,9 @@ using HarmonyLib;
 using Verse;
 using RimWorld;
 
-namespace RunAndDestroy
+namespace RunGunAndDestroy
 {
+    //TODO: This should probably be a transpiler
     [HarmonyPatch(typeof(Verb), nameof(Verb.TryStartCastOn), new Type[] { typeof(LocalTargetInfo), typeof(LocalTargetInfo), typeof(bool), typeof(bool), typeof(bool), typeof(bool) })]
     static class Patch_TryStartCastOn
     {
@@ -28,16 +29,9 @@ namespace RunAndDestroy
             }
             if (casterIsPawn)
             {
-                CompRunAndGun comp = pawn.TryGetComp<CompRunAndGun>();
-                if (comp == null || !comp.isEnabled || pawn.CurJobDef != JobDefOf.Goto)
-                {
-                    return true;
-                }
+                if (!pawn.RunsAndGuns() || pawn.CurJobDef != JobDefOf.Goto) return true;
             }
-            if (!casterIsPawn)
-            {
-                return true;
-            }
+            else return true;
 
             var curStance = pawn.stances.curStance.GetType().Name;
             if (curStance == nameof(Stance_RunAndGun) || curStance == nameof(Stance_RunAndGun_Cooldown))
@@ -59,6 +53,7 @@ namespace RunAndDestroy
                 pawn.Drawer.Notify_WarmingCastAlongLine(newShootLine, caster.Position);
                 float statValue = pawn.GetStatValue(StatDefOf.AimingDelayFactor, true);
                 int ticks = (__instance.verbProps.warmupTime * statValue).SecondsToTicks();
+
                 pawn.stances.SetStance(new Stance_RunAndGun(ticks, castTarg, __instance));
             }
             else __instance.WarmupComplete();

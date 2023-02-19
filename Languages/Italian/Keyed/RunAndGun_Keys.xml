@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+	<RG_AccuracyPenalty_Title>Penalità sulla precisione(%)</RG_AccuracyPenalty_Title>
+	<RG_AccuracyPenalty_Description>Penalità sulla precisione quando il la modalità Run and Gun è attiva</RG_AccuracyPenalty_Description>
+	<RG_MovementPenaltyHeavy_Title>Penalità di movimento con armi pesanti (%)</RG_MovementPenaltyHeavy_Title>
+	<RG_MovementPenaltyHeavy_Description>Penalità di movimento con le armi pesanti durante il fuoco</RG_MovementPenaltyHeavy_Description>
+	<RG_MovementPenaltyLight_Title>Penalità di movimento con armi leggere (%)</RG_MovementPenaltyLight_Title>
+	<RG_MovementPenaltyLight_Description>Penalità di movimento con le armi leggere durante il fuoco</RG_MovementPenaltyLight_Description>
+	<RG_EnableRGForAI_Title>Abilità RunAndGun per l'AI</RG_EnableRGForAI_Title>
+	<RG_EnableRGForAI_Description>Abilita RunAndGun per tutta l'AI. Attenzione, rende l'AI estremamente letale</RG_EnableRGForAI_Description>
+	<RG_EnableRGForFleeChance_Title>Fuoco durante la fuga(%)</RG_EnableRGForFleeChance_Title>
+	<RG_EnableRGForFleeChance_Description>Possibilità che i nemici aprino il fuoco durante la fuga</RG_EnableRGForFleeChance_Description>
+	<RG_WeightLimitFilter_Title>Filtra armi pesanti/leggere per peso</RG_WeightLimitFilter_Title>
+	<RG_WeightLimitFilter_Description>Utilizza il cursore per impostare il limite di peso utilizzato per il filtro. Le armi vengono categorizzate come pesanti o leggere in base a questo limite. Armi pesanti ricevono una penalità di movimento diversa dalle armi leggere. </RG_WeightLimitFilter_Description>
+</LanguageData>

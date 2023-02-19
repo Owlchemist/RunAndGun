@@ -1,7 +1,7 @@
 ﻿using Verse;
 using RimWorld;
 
-namespace RunAndDestroy
+namespace RunGunAndDestroy
 {
 	class Stance_RunAndGun_Cooldown : Stance_Cooldown
 	{

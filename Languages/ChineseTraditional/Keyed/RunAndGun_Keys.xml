@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+	<RG_AccuracyPenalty_Title>精準度懲罰(%)</RG_AccuracyPenalty_Title>
+	<RG_AccuracyPenalty_Description>跑動時的射擊精準度懲罰</RG_AccuracyPenalty_Description>
+	<RG_MovementPenaltyHeavy_Title>重型武器行動懲罰(%)</RG_MovementPenaltyHeavy_Title>
+	<RG_MovementPenaltyHeavy_Description>重型武器在射擊時的行動懲罰。</RG_MovementPenaltyHeavy_Description>
+	<RG_MovementPenaltyLight_Title>輕型武器行動懲罰(%)</RG_MovementPenaltyLight_Title>
+	<RG_MovementPenaltyLight_Description>輕型武器在射擊時的行動懲罰。</RG_MovementPenaltyLight_Description>
+	<RG_EnableRGForAI_Title>為遊戲AI開啟移動射擊</RG_EnableRGForAI_Title>
+	<RG_EnableRGForAI_Description>給予所有的AI啟動移動射擊功能。注意，這會使它們更有威脅性。</RG_EnableRGForAI_Description>
+	<RG_EnableRGForFleeChance_Title>逃兵反擊(%)</RG_EnableRGForFleeChance_Title>
+	<RG_EnableRGForFleeChance_Description>為逃跑中的敵人開啟移動射擊。</RG_EnableRGForFleeChance_Description>
+	<RG_WeightLimitFilter_Title>按重量限制過濾重型/輕型</RG_WeightLimitFilter_Title>
+	<RG_WeightLimitFilter_Description>拖動滑塊來設置重量限制過濾器。點擊應用時，根據這個重量限制，武器被分類為重型或輕型。重型武器獲得不同的移動懲罰，然後是輕型武器。</RG_WeightLimitFilter_Description>
+</LanguageData>

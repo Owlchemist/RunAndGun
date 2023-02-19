@@ -4,9 +4,9 @@ using HarmonyLib;
 using Verse;
 using UnityEngine;
 using RimWorld;
-using Settings = RunAndDestroy.ModSettings_RunAndDestroy;
+using Settings = RunGunAndDestroy.ModSettings_RunAndDestroy;
 
-namespace RunAndDestroy
+namespace RunGunAndDestroy
 {
     [HarmonyPatch(typeof(Pawn), nameof(Pawn.GetGizmos))]
     public class Patch_PawnGetGizmos
@@ -15,25 +15,20 @@ namespace RunAndDestroy
         {
             foreach (var gizmo in values) yield return gizmo;
             if (__instance == null || !__instance.Drafted || !__instance.Faction.def.isPlayer || !(__instance.equipment?.Primary?.def.IsWeaponUsingProjectiles ?? true)
-                 || values == null || !values.Any())
-            {
-                yield break;
-            }
-            CompRunAndGun data = __instance.TryGetComp<CompRunAndGun>();
-            if(data == null) yield break;
-            
-            if (__instance.equipment != null && __instance.equipment.Primary != null && Settings.forbiddenWeaponsCache.Contains(__instance.equipment.Primary.def.shortHash))
+                 || values == null || !values.Any() || Settings.forbiddenWeaponsCache.Contains(__instance.equipment?.Primary?.def.shortHash ?? 0))
             {
                 yield break;
             }
 
+            bool isEnabled = __instance.RunsAndGuns();
+
             yield return new Command_Toggle
             {
                 defaultLabel = "RG_Action_Enable_Label".Translate(),
-                defaultDesc = data.isEnabled ? "RG_Action_Disable_Description".Translate() : "RG_Action_Enable_Description".Translate(),
+                defaultDesc = isEnabled ? "RG_Action_Disable_Description".Translate() : "RG_Action_Enable_Description".Translate(),
                 icon = ContentFinder<Texture2D>.Get(("UI/Buttons/enable_RG"), true),
-                isActive = () => data.isEnabled,
-                toggleAction = () => { data.isEnabled = !data.isEnabled; } 
+                isActive = () => isEnabled,
+                toggleAction = () => { __instance.SetRunsAndGuns(!isEnabled); } 
             };
         }
     }
