@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+	<SD_Reason_Downed>쓰러진 폰은 "수색 밎 파괴"를 활성화할 수 없습니다.</SD_Reason_Downed>
+	<SD_Gizmo_Melee_Label>수색 밎 파괴 (근접)</SD_Gizmo_Melee_Label>
+	<SD_Gizmo_Melee_Description>근접 무기를 사용하는 폰에게 "수색 밎 파괴"를 활성화합니다.</SD_Gizmo_Melee_Description>
+	<SD_Gizmo_Ranged_Label>수색 밎 파괴 (원거리)</SD_Gizmo_Ranged_Label>
+	<SD_Gizmo_Ranged_Description>원거리 무기를 사용하는 폰에게 "수색 밎 파괴"를 활성화합니다.</SD_Gizmo_Ranged_Description>
+</LanguageData>

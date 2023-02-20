@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+	<SD_Reason_Downed>No se puede activar Buscar y destruir en un colono derribado.</SD_Reason_Downed>
+	<SD_Gizmo_Melee_Label>Buscar y destruir (L)</SD_Gizmo_Melee_Label>
+	<SD_Gizmo_Melee_Description>Activar Buscar y destruir en un colono luchador.</SD_Gizmo_Melee_Description>
+	<SD_Gizmo_Ranged_Label>Buscar y destruir (T)</SD_Gizmo_Ranged_Label>
+	<SD_Gizmo_Ranged_Description>Activar Buscar y destruir en un colono tirador.</SD_Gizmo_Ranged_Description>
+</LanguageData>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+	<SD_Reason_Downed>倒れているポーンはサーチアンドデストロイを有効化することはできません。</SD_Reason_Downed>
+	<SD_Gizmo_Melee_Label>サーチ&amp;デストロイ(殴)</SD_Gizmo_Melee_Label>
+	<SD_Gizmo_Melee_Description>近接攻撃武器を装備したポーンのサーチ&amp;デストロイを有効化します。</SD_Gizmo_Melee_Description>
+	<SD_Gizmo_Ranged_Label>サーチ&amp;デストロイ(銃)</SD_Gizmo_Ranged_Label>
+	<SD_Gizmo_Ranged_Description>遠距離攻撃武器を装備したポーンのサーチ&amp;デストロイを有効化します。</SD_Gizmo_Ranged_Description>
+</LanguageData>

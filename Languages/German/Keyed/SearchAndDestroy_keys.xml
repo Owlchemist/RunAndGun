@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+	<SD_Reason_Downed>Search and Destroy kann nicht für bewusstlose Charaktere aktiviert werden.</SD_Reason_Downed>
+	<SD_Gizmo_Melee_Label>Search and Destroy (N)</SD_Gizmo_Melee_Label>
+	<SD_Gizmo_Melee_Description>Search and Destroy für den Nahkampf aktivieren.</SD_Gizmo_Melee_Description>
+	<SD_Gizmo_Ranged_Label>Search and Destroy (F)</SD_Gizmo_Ranged_Label>
+	<SD_Gizmo_Ranged_Description>Search and Destroy für den Fernkampf aktivieren.</SD_Gizmo_Ranged_Description>
+</LanguageData>

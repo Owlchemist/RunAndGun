@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+	<SD_Reason_Downed>無法使一個倒地的士兵激活"搜尋並摧毀"</SD_Reason_Downed>
+	<SD_Gizmo_Melee_Label>搜尋並摧毀(近)</SD_Gizmo_Melee_Label>
+	<SD_Gizmo_Melee_Description>尋找一個敵人並進行近戰。</SD_Gizmo_Melee_Description>
+	<SD_Gizmo_Ranged_Label>搜尋並摧毀(遠)</SD_Gizmo_Ranged_Label>
+	<SD_Gizmo_Ranged_Description>尋找一個敵人並進行射擊。</SD_Gizmo_Ranged_Description>
+</LanguageData>

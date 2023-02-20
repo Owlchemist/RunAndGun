@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+	<SD_Reason_Downed>Cannot activate search and destroy for a downed pawn.</SD_Reason_Downed>
+	<SD_Gizmo_Melee_Label>Melee search and destroy</SD_Gizmo_Melee_Label>
+	<SD_Gizmo_Melee_Description>Activate search and destroy for a melee pawn.</SD_Gizmo_Melee_Description>
+	<SD_Gizmo_Ranged_Label>Ranged search and destroy</SD_Gizmo_Ranged_Label>
+	<SD_Gizmo_Ranged_Description>Activate search and destroy for a ranged pawn.</SD_Gizmo_Ranged_Description>
+</LanguageData>

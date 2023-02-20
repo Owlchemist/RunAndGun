@@ -1,0 +1,15 @@
+<Defs>
+	<DutyDef>
+		<defName>SD_SearchAndDestroy</defName>
+		<alwaysShowWeapon>true</alwaysShowWeapon>
+		<thinkNode Class="ThinkNode_Priority">
+			<subNodes>
+				<li Class="JobGiver_AIFightEnemies">
+					<targetAcquireRadius>65</targetAcquireRadius>
+					<targetKeepRadius>72</targetKeepRadius>
+				</li>
+				<li Class="JobGiver_AIGotoNearestHostile" />
+			</subNodes>
+		</thinkNode>
+	</DutyDef>
+</Defs>

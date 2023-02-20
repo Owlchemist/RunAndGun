@@ -14,7 +14,7 @@ namespace RunGunAndDestroy
 	
 		static Setup()
 		{
-			var harmony = new HarmonyLib.Harmony("RunAndDestroy");
+			var harmony = new HarmonyLib.Harmony("RunGunAndDestroy");
 			harmony.PatchAll();
 
             heavyWeaponsCache = new HashSet<ushort>();
@@ -52,7 +52,6 @@ namespace RunGunAndDestroy
 			workingList.SortBy(x => x.label);
 			allWeapons = workingList.ToArray();
 		}
-
 		public static void CheckInvesions()
 		{
 			//Reset
@@ -163,7 +162,7 @@ namespace RunGunAndDestroy
 		}
 		public override string SettingsCategory()
 		{
-			return "Run and Destroy";
+			return "Run Gun and Destroy";
 		}
 		public override void WriteSettings()
 		{            

@@ -9,7 +9,7 @@ namespace RunGunAndDestroy
 	[HarmonyPatch(typeof(JobDriver), nameof(JobDriver.SetupToils))]
 	static class Patch_SetupToils
 	{
-		static TargetScanFlags targetScanFlags = TargetScanFlags.NeedLOSToPawns | TargetScanFlags.NeedLOSToNonPawns | TargetScanFlags.NeedThreat;
+		static TargetScanFlags targetScanFlags = TargetScanFlags.NeedLOSToPawns | TargetScanFlags.NeedLOSToNonPawns | TargetScanFlags.NeedThreat | TargetScanFlags.NeedAutoTargetable;
 		static void Postfix(JobDriver __instance)
 		{
 			if(__instance is not JobDriver_Goto jobDriver || !__instance.pawn.RunsAndGuns() || __instance.toils.Count == 0)
@@ -24,15 +24,15 @@ namespace RunGunAndDestroy
 					(pawn.Drafted || !pawn.IsColonist) && !pawn.Downed && 
 					!pawn.HasAttachment(ThingDefOf.Fire))
 				{
-					CheckForAutoAttack(pawn);
+					CheckForAutoAttack(pawn, __instance);
 				}
 			});
 		}
-		static void CheckForAutoAttack(Pawn pawn)
+		static void CheckForAutoAttack(Pawn pawn, JobDriver jobDriver)
 		{
 			if ((pawn.story == null || !pawn.story.DisabledWorkTagsBackstoryAndTraits.HasFlag(WorkTags.Violent)) &&
 				pawn.Faction != null &&
-				!(pawn.stances.curStance is Stance_RunAndGun) &&
+				pawn.stances.curStance is not Stance_RunAndGun &&
 				(pawn.drafter == null || pawn.drafter.FireAtWill))
 			{
 				Verb verb = pawn.TryGetAttackVerb(null);
@@ -44,6 +44,7 @@ namespace RunGunAndDestroy
 					if (thing != null && !(verb.IsMeleeAttack && pawn.CanReachImmediate(thing, PathEndMode.Touch))) //Don't allow melee attacks, but take into account ranged animals or dual wield users
 					{
 						pawn.TryStartAttack(thing);
+						jobDriver.collideWithPawns = true;
 						return;
 					}
 				}
