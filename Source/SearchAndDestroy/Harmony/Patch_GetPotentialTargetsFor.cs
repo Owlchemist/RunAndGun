@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using RimWorld;
-using System.Linq;
 using Verse;
 using Verse.AI;
 using System.Collections.Generic;
@@ -10,33 +9,20 @@ namespace RunGunAndDestroy
     [HarmonyPatch(typeof(AttackTargetsCache), nameof(AttackTargetsCache.GetPotentialTargetsFor))]
     static class Patch_GetPotentialTargetsFor
     {
-        static void Postfix(IAttackTargetSearcher th, ref List<IAttackTarget> __result)
-        {
-            List<IAttackTarget> shouldRemove = new List<IAttackTarget>();
-            var searchPawn = th as Pawn;
-            if (searchPawn == null)
+        static void Postfix(IAttackTargetSearcher th, List<IAttackTarget> __result)
+        {    
+            if (th is not Pawn searchPawn || !searchPawn.SearchesAndDestroys()) return;
+
+            for (int i= __result.Count - 1; i > -1; i--)
             {
-                return;
-            }
+                var target = __result[i];
+                if (target is Pawn targetPawn)
+                {
+                    if (!targetPawn.NonHumanlikeOrWildMan() || targetPawn.IsAttacking()) continue;
+                }
                 
-            if (!searchPawn.SearchesAndDestroys()) //only apply patch for SD pawns
-            {
-                return;
+                __result.Remove(target);
             }
-            
-            foreach (var target in __result)
-            {
-                var targetPawn = target as Pawn;
-                if (targetPawn != null && targetPawn.NonHumanlikeOrWildMan() && !targetPawn.IsAttacking())
-                {
-                    shouldRemove.Add(target);
-                }
-                if(targetPawn == null)//thing is building
-                {
-                    shouldRemove.Add(target);
-                }
-            }
-            __result = __result.Except(shouldRemove).ToList();
         }
     }
 }

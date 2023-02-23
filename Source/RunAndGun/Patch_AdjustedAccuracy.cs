@@ -16,7 +16,7 @@ namespace RunGunAndDestroy
             var curStance = tracker.pawn.stances?.curStance.GetType().Name;
             if (curStance == nameof(Stance_RunAndGun) || curStance == nameof(Stance_RunAndGun_Cooldown))
             {
-                return __result * (tracker.pawn.IsColonist ? Settings.accuracyPenaltyPlayer : Settings.accuracyPenalty);
+                return __result * (tracker.pawn.IsColonist ? Settings.accuracyModifierPlayer : Settings.accuracyModifier);
             }
             return __result;
         }

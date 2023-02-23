@@ -3,6 +3,7 @@ using HarmonyLib;
 using Verse;
 using Verse.AI;
 using RimWorld;
+using Settings = RunGunAndDestroy.ModSettings_RunAndDestroy;
 
 namespace RunGunAndDestroy
 {
@@ -21,7 +22,7 @@ namespace RunGunAndDestroy
 			{
 				Pawn pawn = jobDriver.pawn;
 				if (pawn.IsHashIntervalTick(10) &&  
-					(pawn.Drafted || !pawn.IsColonist) && !pawn.Downed && 
+					(pawn.Drafted || (!pawn.IsColonist && Settings.enableForAI) || (pawn.RaceProps.Animal && Settings.enableForAnimals)) && !pawn.Downed && 
 					!pawn.HasAttachment(ThingDefOf.Fire))
 				{
 					CheckForAutoAttack(pawn, __instance);

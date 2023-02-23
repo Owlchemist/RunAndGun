@@ -23,7 +23,7 @@ namespace RunGunAndDestroy
             }
             
             if (__instance.verbProps.CausesTimeSlowdown && castTarg.HasThing && (castTarg.Thing.def.category == ThingCategory.Pawn || (castTarg.Thing.def.building != null && 
-                castTarg.Thing.def.building.IsTurret)) && castTarg.Thing.Faction.def.isPlayer && caster.HostileTo(Current.gameInt.worldInt.factionManager.ofPlayer))
+                castTarg.Thing.def.building.IsTurret)) && (castTarg.Thing.Faction != null && castTarg.Thing.Faction.def.isPlayer) && caster.HostileTo(Current.gameInt.worldInt.factionManager.ofPlayer))
             {
                 Find.TickManager.slower.SignalForceNormalSpeed();
             }
@@ -53,7 +53,6 @@ namespace RunGunAndDestroy
                 pawn.Drawer.Notify_WarmingCastAlongLine(newShootLine, caster.Position);
                 float statValue = pawn.GetStatValue(StatDefOf.AimingDelayFactor, true);
                 int ticks = (__instance.verbProps.warmupTime * statValue).SecondsToTicks();
-
                 pawn.stances.SetStance(new Stance_RunAndGun(ticks, castTarg, __instance));
             }
             else __instance.WarmupComplete();

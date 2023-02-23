@@ -98,17 +98,24 @@ namespace RunGunAndDestroy
 
 				Listing_Standard options = new Listing_Standard();
 				options.Begin(inRect.ContractedBy(15f));
+				options.ColumnWidth = (options.listingRect.width - 30f) / 2f;
 
 				options.CheckboxLabeled("RG_EnableRGForAI_Title".Translate(), ref enableForAI, "RG_EnableRGForAI_Description".Translate());
+				options.CheckboxLabeled("RG_EnableRGForAnimals_Title".Translate(), ref enableForAnimals, "RG_EnableRGForAnimals_Description".Translate());
 				
 				if (enableForAI)
 				{
-					options.Label("RG_AccuracyPenalty_Title".Translate("0", "100", "65", Math.Round(accuracyPenalty * 100).ToString()), -1f, "RG_AccuracyPenalty_Description".Translate());
-					accuracyPenalty = options.Slider(accuracyPenalty, 0f, 1f);
+					options.Label("RG_AccuracyPenalty_Title".Translate("0", "100", "65", Math.Round(accuracyModifier * 100).ToString()), -1f, "RG_AccuracyPenalty_Description".Translate());
+					accuracyModifier = options.Slider(accuracyModifier, 0f, 1f);
 				}
 
-				options.Label("RG_AccuracyPenaltyPlayer_Title".Translate("0", "100", "65", Math.Round(accuracyPenalty * 100).ToString()), -1f, "RG_AccuracyPenaltyPlayer_Description".Translate());
-				accuracyPenaltyPlayer = options.Slider(accuracyPenaltyPlayer, 0f, 1f);
+				options.Label("RG_AccuracyPenaltyPlayer_Title".Translate("0", "100", "65", Math.Round(accuracyModifierPlayer * 100).ToString()), -1f, "RG_AccuracyPenaltyPlayer_Description".Translate());
+				accuracyModifierPlayer = options.Slider(accuracyModifierPlayer, 0f, 1f);
+
+				options.Label("RG_AccuracyPenaltyMechs_Title".Translate("0", "100", "80", Math.Round(accuracyModifierMechs * 100).ToString()), -1f, "RG_AccuracyPenaltyMechs_Description".Translate());
+				accuracyModifierMechs = options.Slider(accuracyModifierMechs, 0f, 1f);
+
+				options.NewColumn();
 				
 				if (enableForAI)
 				{
@@ -116,17 +123,18 @@ namespace RunGunAndDestroy
 					enableForFleeChance = (int)options.Slider(enableForFleeChance, 0f, 100f);
 				}
 
-				options.Label("RG_MovementPenaltyHeavy_Title".Translate("0", "100", "70", movementPenaltyHeavy.ToString()), -1f, "RG_MovementPenaltyHeavy_Description".Translate());
-				movementPenaltyHeavy = (int)options.Slider(movementPenaltyHeavy, 0f, 100f);
+				options.Label("RG_MovementPenaltyHeavy_Title".Translate("0", "100", "30", Math.Round(movementModifierHeavy * 100).ToString()), -1f, "RG_MovementPenaltyHeavy_Description".Translate());
+				movementModifierHeavy = options.Slider(movementModifierHeavy, 0f, 1f);
 
-				options.Label("RG_MovementPenaltyLight_Title".Translate("0", "100", "35", movementPenaltyLight.ToString()), -1f, "RG_MovementPenaltyLight_Description".Translate());
-				movementPenaltyLight = (int)options.Slider(movementPenaltyLight, 0f, 100f);
+				options.Label("RG_MovementPenaltyLight_Title".Translate("0", "100", "65", Math.Round(movementModifierLight * 100).ToString()), -1f, "RG_MovementPenaltyLight_Description".Translate());
+				movementModifierLight = options.Slider(movementModifierLight, 0f, 1f);
 				
 				//Record positioning before closing out the lister...
 				Rect weaponsFilterRect = inRect.ContractedBy(15f);
-				weaponsFilterRect.y = options.curY + 90f;
-				weaponsFilterRect.height = inRect.height - options.curY - 105f; //Use remaining space
+				weaponsFilterRect.y = options.curY + 130f;
+				weaponsFilterRect.height = inRect.height - options.curY - 135f; //Use remaining space
 
+				options.ColumnWidth = options.listingRect.width - 30f;
 				options.End();
 
 				//========Setup tabs=========
@@ -184,21 +192,23 @@ namespace RunGunAndDestroy
 			Scribe_Values.Look(ref enableForAI, "enableForAI", true);
 			Scribe_Values.Look(ref enableForAnimals, "enableForAnimals");
 			Scribe_Values.Look(ref enableForFleeChance, "enableForFleeChance", 50);
-			Scribe_Values.Look(ref accuracyPenalty, "accuracyPenalty", 0.65f);
-			Scribe_Values.Look(ref accuracyPenaltyPlayer, "accuracyPenaltyPlayer", 0.65f);
-			Scribe_Values.Look(ref movementPenaltyHeavy, "movementPenaltyHeavy", 70);
-			Scribe_Values.Look(ref movementPenaltyLight, "movementPenaltyLight", 35);
+			Scribe_Values.Look(ref accuracyModifier, "accuracyPenalty", 0.65f);
+			Scribe_Values.Look(ref accuracyModifierPlayer, "accuracyPenaltyPlayer", 0.65f);
+			Scribe_Values.Look(ref accuracyModifierMechs, "accuracyModifierMechs", 0.8f);
+			Scribe_Values.Look(ref movementModifierHeavy, "movementModifierHeavy", 0.3f);
+			Scribe_Values.Look(ref movementModifierLight, "movementModifierLight", 0.65f);
 			Scribe_Collections.Look(ref heavyWeapons, "heavyWeapons", LookMode.Value);
 			Scribe_Collections.Look(ref forbiddenWeapons, "forbiddenWeapons", LookMode.Value);
 			
 			base.ExposeData();
 		}
 		public static bool enableForAI = true, enableForAnimals;
-		public static int movementPenaltyHeavy = 70,
-			movementPenaltyLight = 35,
-			enableForFleeChance = 50;
-		public static float accuracyPenalty = 0.65f,
-			accuracyPenaltyPlayer = 0.65f;
+		public static int enableForFleeChance = 50;
+		public static float accuracyModifier = 0.65f,
+			accuracyModifierPlayer = 0.65f,
+			accuracyModifierMechs = 0.8f,
+			movementModifierHeavy = 0.3f,
+			movementModifierLight = 0.65f;
         public static HashSet<ushort> heavyWeaponsCache,
 			 forbiddenWeaponsCache;
 		public static List<string> heavyWeapons,
