@@ -1,6 +1,7 @@
 using Verse;
 using System.Linq;
 using System.Collections.Generic;
+using Settings = RunGunAndDestroy.ModSettings_RunAndDestroy;
 
 namespace RunGunAndDestroy
 {
@@ -24,11 +25,31 @@ namespace RunGunAndDestroy
 			if (set) RNDStorage._instance.SnD.Add(pawn);
 			else RNDStorage._instance.SnD.Remove(pawn);
 		}
+		public static bool IsOffHand(this ThingWithComps thing)
+		{
+			return RNDStorage._instance.offhands.Contains(thing);
+		}
+		public static void SetOffhand(this Thing thing, bool set)
+		{
+			if (set) RNDStorage._instance.offhands.Add(thing);
+			else RNDStorage._instance.offhands.Remove(thing);
+		}
+		public static bool IsTwoHanded(this Def def)
+		{
+			return Settings.twoHandSelectionCache.Contains(def.shortHash);
+		}
+
+		public static bool CanBeOffHand(this Def def)
+		{
+			return Settings.dualWieldSelectionCache.Contains(def.shortHash);
+		}
 	}
 	class RNDStorage : GameComponent
 	{
 		public HashSet<Pawn> RnG = new HashSet<Pawn>();
 		public HashSet<Pawn> SnD = new HashSet<Pawn>();
+		public HashSet<Thing> offhands = new HashSet<Thing>();
+		public Dictionary<int, Pawn_StanceTracker> stancesOffhand = new Dictionary<int, Pawn_StanceTracker>();
 		public static RNDStorage _instance;
 		public RNDStorage(Game game)
 		{ 

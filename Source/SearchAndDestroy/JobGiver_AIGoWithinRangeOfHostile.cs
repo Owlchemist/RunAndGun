@@ -9,7 +9,7 @@ namespace RunGunAndDestroy
 		public override Job TryGiveJob(Pawn pawn)
 		{
 			var job = base.TryGiveJob(pawn);
-			if(job != null)
+			if (job != null)
             {
 				job.expiryInterval = 30;
             }

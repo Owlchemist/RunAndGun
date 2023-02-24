@@ -17,7 +17,12 @@ namespace RunGunAndDestroy
 			var harmony = new HarmonyLib.Harmony("RunGunAndDestroy");
 			harmony.PatchAll();
 
-            heavyWeaponsCache = new HashSet<ushort>();
+			SetupRnG();
+			SetupDW();
+		}
+		static void SetupRnG()
+		{
+			heavyWeaponsCache = new HashSet<ushort>();
 			forbiddenWeaponsCache = new HashSet<ushort>();
 			if (heavyWeapons == null) heavyWeapons = new List<string>();
 			if (forbiddenWeapons == null) forbiddenWeapons = new List<string>();
@@ -52,6 +57,16 @@ namespace RunGunAndDestroy
 			workingList.SortBy(x => x.label);
 			allWeapons = workingList.ToArray();
 		}
+		static void SetupDW()
+		{
+			dualWieldSelectionCache = new HashSet<ushort>();
+			twoHandSelectionCache = new HashSet<ushort>();
+			if (dualWieldSelection == null) dualWieldSelection = new List<string>();
+			if (twoHandSelection == null) twoHandSelection = new List<string>();
+
+			customRotationsCache = new Dictionary<ushort, float>();
+			if (customRotations == null) customRotations = new Dictionary<string, float>();
+		}
 		public static void CheckInvesions()
 		{
 			//Reset
@@ -84,12 +99,14 @@ namespace RunGunAndDestroy
 			var tabs = new List<TabRecord>();
 			tabs.Add(new TabRecord("RG_Tab_RunAndGun".Translate(), delegate { selectedTab = SelectedTab.runAndGun; }, selectedTab == SelectedTab.runAndGun || selectedTab == SelectedTab.heavyWeapons || selectedTab == SelectedTab.forbiddenWeapons));
 			tabs.Add(new TabRecord("RG_Tab_SearchAndDestroy".Translate(), delegate { selectedTab = SelectedTab.searchAndDestroy; }, selectedTab == SelectedTab.searchAndDestroy));
+			tabs.Add(new TabRecord("RG_Tab_DualWield".Translate(), delegate { selectedTab = SelectedTab.dualWield; }, selectedTab == SelectedTab.dualWield));
 
 			Rect rect = new Rect(0f, 32f, inRect.width, inRect.height - 32f);
 			Widgets.DrawMenuSection(rect);
 			TabDrawer.DrawTabs(new Rect(0f, 32f, inRect.width, Text.LineHeight), tabs);
 
 			if (selectedTab == SelectedTab.runAndGun || selectedTab == SelectedTab.heavyWeapons || selectedTab == SelectedTab.forbiddenWeapons) DrawCore();
+			else if (selectedTab == SelectedTab.dualWield) DrawDualWield();
 			GUI.EndGroup();
 			
 			void DrawCore()
@@ -167,6 +184,10 @@ namespace RunGunAndDestroy
 					options.End();
 				Widgets.EndScrollView();   
 			}
+			void DrawDualWield()
+			{
+
+			}
 		}
 		public override string SettingsCategory()
 		{
@@ -202,7 +223,7 @@ namespace RunGunAndDestroy
 			
 			base.ExposeData();
 		}
-		public static bool enableForAI = true, enableForAnimals;
+		public static bool enableForAI = true, enableForAnimals, runAndGunEnabled;
 		public static int enableForFleeChance = 50;
 		public static float accuracyModifier = 0.65f,
 			accuracyModifierPlayer = 0.65f,
@@ -210,16 +231,46 @@ namespace RunGunAndDestroy
 			movementModifierHeavy = 0.3f,
 			movementModifierLight = 0.65f;
         public static HashSet<ushort> heavyWeaponsCache,
-			 forbiddenWeaponsCache;
+			 forbiddenWeaponsCache,
+			 dualWieldSelectionCache,
+			 twoHandSelectionCache;
+		public static Dictionary<ushort, float> customRotationsCache;
 		public static List<string> heavyWeapons,
-			 forbiddenWeapons;
+			 forbiddenWeapons,
+			 dualWieldSelection,
+			 twoHandSelection;
+		public static Dictionary<string, float> customRotations;
         
 		#region settings UI
 		public static float weightLimitFilter = weightLimitFilterDefault;
 		public const float weightLimitFilterDefault = 3.4f;
 		public static Vector2 scrollPos;
 		public static SelectedTab selectedTab = SelectedTab.runAndGun;
-		public enum SelectedTab { runAndGun, heavyWeapons, forbiddenWeapons, searchAndDestroy };
+		public enum SelectedTab { runAndGun, heavyWeapons, forbiddenWeapons, searchAndDestroy, dualWield };
+		#endregion
+	
+		#region dual wield
+		public static bool settingsGroup_Drawing,
+			settingsGroup_DualWield,
+			settingsGroup_TwoHand,
+			settingsGroup_Penalties,
+			meleeMirrored,
+			rangedMirrored;
+
+        public static float staticCooldownPOffHand,
+			staticCooldownPMainHand,
+			staticAccPOffHand,
+			staticAccPMainHand,
+			dynamicCooldownP,
+			dynamicAccP,
+			meleeAngle,
+			rangedAngle,
+			meleeXOffset,
+			rangedXOffset,
+			meleeZOffset,
+			rangedZOffset;
+
+        public static int NPCDualWieldChance;
 		#endregion
 	}
 }

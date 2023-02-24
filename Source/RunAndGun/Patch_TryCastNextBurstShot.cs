@@ -31,6 +31,7 @@ namespace RunGunAndDestroy
             if (stanceVerb.EquipmentSource == null || isOffHand == null || !isOffHand(stanceVerb.EquipmentSource))
 		    {
                 var curStance = stanceTracker.curStance.GetType().Name;
+                DualWield.Patch_Verb_TryCastNextBurstShot.SetStanceOffHand(stanceTracker, stance);
                 if ((curStance == nameof(Stance_RunAndGun) || curStance == nameof(Stance_RunAndGun_Cooldown)) && stanceTracker.pawn.pather.Moving)
                 {
                     stanceTracker.SetStance(new Stance_RunAndGun_Cooldown(stance.ticksLeft, stance.focusTarg, stanceVerb));

@@ -9,7 +9,7 @@ namespace RunGunAndDestroy
 		public override Job TryGiveJob(Pawn pawn)
 		{
 			var job = base.TryGiveJob(pawn);
-			if(job != null)
+			if (job != null)
             {
 				job.expiryInterval = 30;
             }
@@ -18,11 +18,11 @@ namespace RunGunAndDestroy
         public override bool ExtraTargetValidator(Pawn pawn, Thing target)
         {
             var targetPawn = target as Pawn;
-            if(targetPawn == null)
+            if (targetPawn == null)
             {
                 return false;
             }
-            if(targetPawn.NonHumanlikeOrWildMan() && !targetPawn.IsAttacking())
+            if (targetPawn.NonHumanlikeOrWildMan() && !targetPawn.IsAttacking())
             {
                 return false;
             }

@@ -52,7 +52,6 @@ namespace RunGunAndDestroy
 			}
 
 			//Handle row coloring and spacing
-			options.Gap(options.verticalSpacing);
 			if (lineNumber % 2 != 0) Widgets.DrawLightHighlight(rect);
 			Widgets.DrawHighlightIfMouseover(rect);
 			
