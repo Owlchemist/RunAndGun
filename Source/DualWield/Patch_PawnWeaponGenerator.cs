@@ -3,13 +3,17 @@ using RimWorld;
 using System.Collections.Generic;
 using System.Linq;
 using Verse;
-using Settings = RunGunAndDestroy.ModSettings_RunAndDestroy;
+using Settings = SumGunFun.ModSettings_SumGunFun;
 
-namespace RunGunAndDestroy.DualWield
+namespace SumGunFun.DualWield
 {
     [HarmonyPatch(typeof(PawnWeaponGenerator), nameof(PawnWeaponGenerator.TryGenerateWeaponFor))]
     class Patch_PawnWeaponGenerator_TryGenerateWeaponFor
     {
+        static bool Prepare()
+        {
+            return Settings.dualWieldEnabled;
+        }
         static void Postfix(Pawn pawn)
         {
             if (pawn.RaceProps.Humanlike && Rand.Chance(((float)Settings.NPCDualWieldChance)/100f))

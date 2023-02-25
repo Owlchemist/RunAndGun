@@ -2,13 +2,19 @@
 using RimWorld;
 using System.Collections.Generic;
 using Verse;
+using Settings = SumGunFun.ModSettings_SumGunFun;
 
-namespace RunGunAndDestroy.DualWield
+namespace SumGunFun.DualWield
 {
     [HarmonyPatch(typeof(VerbTracker), nameof(VerbTracker.CreateVerbTargetCommand))]
     class Patch_VerbTracker_CreateVerbTargetCommand
     {
-        static void Postfix(VerbTracker __instance, Thing ownerThing, ref Verb verb, ref Command_VerbTarget __result) {
+        static bool Prepare()
+        {
+            return Settings.dualWieldEnabled;
+        }
+        static Command_VerbTarget Postfix(Command_VerbTarget __result, VerbTracker __instance, Thing ownerThing, Verb verb)
+        {
             if (ownerThing is ThingWithComps twc && twc.ParentHolder is Pawn_EquipmentTracker peqt)
             {
                 CompEquippable ce = __instance.directOwner as CompEquippable;
@@ -17,10 +23,11 @@ namespace RunGunAndDestroy.DualWield
                 {
                     if (offHandEquip != twc)
                     {
-                        __result = CreateDualWieldCommand(ownerThing, offHandEquip, verb);
+                        return CreateDualWieldCommand(ownerThing, offHandEquip, verb);
                     }
                 }
             }
+            return __result;
         }
         static Command_VerbTarget CreateVerbTargetCommand(VerbTracker __instance, Thing ownerThing, Verb verb)
         {

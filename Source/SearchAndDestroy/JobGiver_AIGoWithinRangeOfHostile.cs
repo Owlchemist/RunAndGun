@@ -2,7 +2,7 @@
 using Verse;
 using Verse.AI;
 
-namespace RunGunAndDestroy
+namespace SumGunFun
 {
     class JobGiver_GoWithinRangeOfHostile : JobGiver_AIGotoNearestHostile
 	{

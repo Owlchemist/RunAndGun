@@ -3,9 +3,9 @@ using HarmonyLib;
 using Verse;
 using Verse.AI;
 using RimWorld;
-using Settings = RunGunAndDestroy.ModSettings_RunAndDestroy;
+using Settings = SumGunFun.ModSettings_SumGunFun;
 
-namespace RunGunAndDestroy
+namespace SumGunFun
 {
 	[HarmonyPatch(typeof(JobDriver), nameof(JobDriver.SetupToils))]
 	static class Patch_SetupToils

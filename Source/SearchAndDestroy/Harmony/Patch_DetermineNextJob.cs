@@ -2,7 +2,7 @@
 using Verse;
 using Verse.AI;
 
-namespace RunGunAndDestroy
+namespace SumGunFun
 {
 	[HarmonyPatch(typeof(Pawn_JobTracker), nameof(Pawn_JobTracker.DetermineNextJob))]
 	static class Patch_DetermineNextJob

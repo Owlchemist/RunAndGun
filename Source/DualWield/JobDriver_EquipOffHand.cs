@@ -3,7 +3,7 @@ using Verse;
 using Verse.AI;
 using Verse.Sound;
 
-namespace RunGunAndDestroy.DualWield
+namespace SumGunFun.DualWield
 {
     class JobDriver_EquipOffHand : JobDriver
     {

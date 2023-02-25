@@ -3,13 +3,18 @@ using RimWorld;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 using Verse;
+using Settings = SumGunFun.ModSettings_SumGunFun;
 
-namespace RunGunAndDestroy.DualWield
+namespace SumGunFun.DualWield
 {
     //This patch prevent an error thrown when a offhand weapon is equipped and the primary weapon is switched. 
     [HarmonyPatch(typeof(Pawn_EquipmentTracker), nameof(Pawn_EquipmentTracker.AddEquipment))]
     class Patch_Pawn_EquipmentTracker_AddEquipment
     {
+        static bool Prepare()
+        {
+            return Settings.dualWieldEnabled;
+        }
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             bool found = false;
@@ -50,6 +55,10 @@ namespace RunGunAndDestroy.DualWield
     [HarmonyPatch(typeof(Pawn_EquipmentTracker), nameof(Pawn_EquipmentTracker.MakeRoomFor))]
     class Patch_Pawn_EquipmentTracker_MakeRoomFor
     {
+        static bool Prepare()
+        {
+            return Settings.dualWieldEnabled;
+        }
         static bool Prefix(Pawn_EquipmentTracker __instance, ThingWithComps eq)
         {
             bool offHandEquipped = __instance.TryGetOffHandEquipment(out ThingWithComps offHand);

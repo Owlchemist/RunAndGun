@@ -2,7 +2,7 @@
 using UnityEngine;
 using Verse;
 
-namespace RunGunAndDestroy
+namespace SumGunFun
 {
     public class Command_DualWield : Command_VerbTarget
     {

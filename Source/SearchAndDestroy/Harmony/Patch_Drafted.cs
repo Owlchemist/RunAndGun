@@ -5,7 +5,7 @@ using UnityEngine;
 using Verse;
 using Verse.AI;
 
-namespace RunGunAndDestroy
+namespace SumGunFun
 {
 	[HarmonyPatch(typeof(Pawn_DraftController), nameof(Pawn_DraftController.Drafted), MethodType.Setter)]
 	static class Patch_Drafted

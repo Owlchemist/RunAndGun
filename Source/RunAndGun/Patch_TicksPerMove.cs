@@ -1,9 +1,9 @@
 ﻿using System;
 using Verse;
 using HarmonyLib;
-using Settings = RunGunAndDestroy.ModSettings_RunAndDestroy;
+using Settings = SumGunFun.ModSettings_SumGunFun;
 
-namespace RunGunAndDestroy
+namespace SumGunFun
 {
     [HarmonyPatch(typeof(Pawn), nameof(Pawn.TicksPerMove))]
     static class Patch_TicksPerMove
@@ -14,8 +14,8 @@ namespace RunGunAndDestroy
             {
                 return __result;
             }
-            var curStance = __instance.stances.curStance.GetType().Name;
-            if (curStance == nameof(Stance_RunAndGun) || curStance == nameof(Stance_RunAndGun_Cooldown))
+            var curStance = __instance.stances.curStance;
+            if (curStance is Stance_RunAndGun || curStance is Stance_RunAndGun_Cooldown)
             {   
                 float factor = Settings.heavyWeaponsCache.Contains(__instance.equipment?.Primary?.def.shortHash ?? 0)
                      ? Settings.movementModifierHeavy : Settings.movementModifierLight;

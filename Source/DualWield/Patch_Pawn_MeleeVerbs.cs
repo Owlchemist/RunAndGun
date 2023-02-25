@@ -2,12 +2,17 @@
 using RimWorld;
 using System.Collections.Generic;
 using Verse;
+using Settings = SumGunFun.ModSettings_SumGunFun;
 
-namespace RunGunAndDestroy.DualWield
+namespace SumGunFun.DualWield
 {
     [HarmonyPatch(typeof(Pawn_MeleeVerbs), nameof(Pawn_MeleeVerbs.GetUpdatedAvailableVerbsList))]
     class Patch_Pawn_MeleeVerbs_GetUpdatedAvailableVerbsList
     {
+        static bool Prepare()
+        {
+            return Settings.dualWieldEnabled;
+        }
         static void Postfix(List<VerbEntry> __result)
         {
             //remove all offhand verbs so they're not used by for mainhand melee attacks.
@@ -22,6 +27,10 @@ namespace RunGunAndDestroy.DualWield
     [HarmonyPatch(typeof(Pawn_MeleeVerbs), nameof(Pawn_MeleeVerbs.TryMeleeAttack))]
     class Patch_Pawn_MeleeVerbs_TryMeleeAttack
     {
+        static bool Prepare()
+        {
+            return Settings.dualWieldEnabled;
+        }
         static void Postfix(Pawn_MeleeVerbs __instance, Thing target, Verb verbToUse, bool surpriseAttack, ref bool __result, ref Pawn ___pawn)
         {
             var stance = ___pawn.GetStancesOffHand();

@@ -2,14 +2,18 @@
 using System;
 using UnityEngine;
 using Verse;
+using Settings = SumGunFun.ModSettings_SumGunFun;
 
-namespace RunGunAndDestroy.DualWield
+namespace SumGunFun.DualWield
 {
-
     [HarmonyPatch(typeof(Projectile), nameof(Projectile.Launch))]
     [HarmonyPatch(new Type[] { typeof(Thing), typeof(Vector3), typeof(LocalTargetInfo), typeof(LocalTargetInfo), typeof(ProjectileHitFlags), typeof(bool), typeof(Thing), typeof(ThingDef) })]
     static class Patch_Projectile_Launch
     {
+        static bool Prepare()
+        {
+            return Settings.dualWieldEnabled;
+        }
         static void Prefix(ref Thing launcher, ref Vector3 origin, Thing equipment)
         {
             if (!(launcher is Pawn pawn) || !(equipment is ThingWithComps twc)) return;

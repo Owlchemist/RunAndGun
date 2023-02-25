@@ -3,13 +3,18 @@ using RimWorld;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 using Verse;
+using Settings = SumGunFun.ModSettings_SumGunFun;
 
-namespace RunGunAndDestroy.DualWield
+namespace SumGunFun.DualWield
 {
     //Tick the stance tracker of the offfhand weapon
     [HarmonyPatch(typeof(Pawn), nameof(Pawn.Tick))]
     class Patch_PawnTick
     {
+        static bool Prepare()
+        {
+            return Settings.dualWieldEnabled;
+        }
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             bool found = false;
@@ -34,6 +39,10 @@ namespace RunGunAndDestroy.DualWield
     [HarmonyPatch(typeof(Pawn), nameof(Pawn.TryStartAttack))]
     class Patch_Pawn_TryStartAttack
     {
+        static bool Prepare()
+        {
+            return Settings.dualWieldEnabled;
+        }
         static void Postfix(Pawn __instance, LocalTargetInfo targ, ref bool __result)
         {
             //Check if it's an enemy that's attacked, and not a fire or an arguing husband
@@ -47,6 +56,10 @@ namespace RunGunAndDestroy.DualWield
     [HarmonyPatch(typeof(Pawn), nameof(Pawn.CurrentEffectiveVerb), MethodType.Getter)]
     class Patch_Pawn_CurrentEffectiveVerb
     {
+        static bool Prepare()
+        {
+            return Settings.dualWieldEnabled;
+        }
         static void Postfix(Pawn __instance, ref Verb __result)
         {
             if (__instance.MannedThing() == null &&

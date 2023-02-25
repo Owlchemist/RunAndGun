@@ -2,10 +2,11 @@ using Verse;
 using UnityEngine;
 using Verse.Sound;
 using RimWorld;
-using static RunGunAndDestroy.ModSettings_RunAndDestroy;
-using static RunGunAndDestroy.Setup;
+using System.Collections.Generic;
+using static SumGunFun.ModSettings_SumGunFun;
+using static SumGunFun.Setup;
  
-namespace RunGunAndDestroy
+namespace SumGunFun
 {
     public static class OptionsDrawUtility
 	{
@@ -20,7 +21,8 @@ namespace RunGunAndDestroy
 			{
 				var def = allWeapons[i];
 				if (def == null) continue;
-				if (selectedTab == SelectedTab.heavyWeapons && def.BaseMass <= weightLimitFilter) continue;
+				if (selectedTab == Tab.heavyWeapons && def.BaseMass <= weightLimitFilter) continue;
+				else if (selectedTab == Tab.offHands && twoHandersCache.Contains(def.shortHash)) continue;
 
 				cellPosition += lineHeight;
 				++lineNumber;
@@ -35,8 +37,11 @@ namespace RunGunAndDestroy
 			//Determine checkbox status...
 			bool checkOn;
 			ushort hash = def.shortHash;
-			if (selectedTab == SelectedTab.heavyWeapons) checkOn = heavyWeaponsCache.Contains(hash);
-			else checkOn = forbiddenWeaponsCache.Contains(hash);
+			if (selectedTab == Tab.heavyWeapons) checkOn = heavyWeaponsCache.Contains(hash);
+			else if (selectedTab == Tab.forbiddenWeapons) checkOn = forbiddenWeaponsCache.Contains(hash);
+			else if (selectedTab == Tab.offHands) checkOn = offHandersCache.Contains(hash);
+			else if (selectedTab == Tab.twoHanders) checkOn = twoHandersCache.Contains(hash);
+			else checkOn = customRotationsCache.ContainsKey(hash);
 			
 			//Fetch bounding rect
 			Rect rect = options.GetRect(lineHeight);
@@ -55,16 +60,18 @@ namespace RunGunAndDestroy
 			if (lineNumber % 2 != 0) Widgets.DrawLightHighlight(rect);
 			Widgets.DrawHighlightIfMouseover(rect);
 			
-			if (selectedTab == SelectedTab.heavyWeapons)
+			HashSet<ushort> hashCache;
+			if (selectedTab == Tab.heavyWeapons) hashCache = heavyWeaponsCache;
+			else if (selectedTab == Tab.forbiddenWeapons) hashCache = forbiddenWeaponsCache;
+			else if (selectedTab == Tab.offHands) hashCache = offHandersCache;
+			else if (selectedTab == Tab.twoHanders) hashCache = twoHandersCache;
+			else return;
+			
+			if (checkOn)
 			{
-				if (checkOn && !heavyWeaponsCache.Contains(hash)) heavyWeaponsCache.Add(hash);
-				else if (!checkOn && heavyWeaponsCache.Contains(hash)) heavyWeaponsCache.Remove(hash);
+				if (!hashCache.Contains(hash)) hashCache.Add(hash);
 			}
-			else
-			{
-				if (checkOn && !forbiddenWeaponsCache.Contains(hash)) forbiddenWeaponsCache.Add(hash);
-				else if (!checkOn && forbiddenWeaponsCache.Contains(hash)) forbiddenWeaponsCache.Remove(hash);
-			}
+			else if (hashCache.Contains(hash)) hashCache.Remove(hash);
 		}
 
 		static void CheckboxLabeled(Rect rect, string data, string label, ref bool checkOn, ThingDef def)

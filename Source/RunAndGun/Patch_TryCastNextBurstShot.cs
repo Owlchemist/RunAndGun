@@ -1,25 +1,13 @@
 ﻿using System.Collections.Generic;
 using Verse;
 using HarmonyLib;
-using System;
-using System.Reflection;
-using MonoMod.Utils;
+using SumGunFun.DualWield;
 
-namespace RunGunAndDestroy
+namespace SumGunFun
 {
     [HarmonyPatch(typeof(Verb), nameof(Verb.TryCastNextBurstShot))]
     static class Verb_TryCastNextBurstShot
     {
-        public static Func<ThingWithComps, bool> isOffHand;
-        static void Prepare()
-        {
-            Type type = AccessTools.TypeByName("DualWield.Ext_ThingWithComps");
-			if (type != null && isOffHand == null)
-			{
-				MethodInfo methodInfo = AccessTools.Method(type, "IsOffHand", null, null);
-				isOffHand = methodInfo != null ? methodInfo.CreateDelegate<Func<ThingWithComps, bool>>() : null;
-			}
-        }
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             return instructions.MethodReplacer(AccessTools.Method(typeof(Pawn_StanceTracker), nameof(Pawn_StanceTracker.SetStance)),
@@ -28,15 +16,29 @@ namespace RunGunAndDestroy
         public static void SetStanceRunAndGun(Pawn_StanceTracker stanceTracker, Stance_Cooldown stance)
         {
             var stanceVerb = stance.verb;
-            if (stanceVerb.EquipmentSource == null || isOffHand == null || !isOffHand(stanceVerb.EquipmentSource))
+            if (stanceVerb.EquipmentSource != null)
 		    {
-                var curStance = stanceTracker.curStance.GetType().Name;
-                DualWield.Patch_Verb_TryCastNextBurstShot.SetStanceOffHand(stanceTracker, stance);
-                if ((curStance == nameof(Stance_RunAndGun) || curStance == nameof(Stance_RunAndGun_Cooldown)) && stanceTracker.pawn.pather.Moving)
+                SetStanceOffHand(stanceTracker, stance);
+                if ((stanceTracker.curStance is Stance_RunAndGun || stanceTracker.curStance is Stance_RunAndGun_Cooldown) && stanceTracker.pawn.pather.Moving)
                 {
                     stanceTracker.SetStance(new Stance_RunAndGun_Cooldown(stance.ticksLeft, stance.focusTarg, stanceVerb));
+                    return;
                 }
-                else stanceTracker.SetStance(stance);
+            }
+            stanceTracker.SetStance(stance);
+        }
+
+        public static void SetStanceOffHand(Pawn_StanceTracker stanceTracker,  Stance_Cooldown stance)
+        {
+            if (stance.verb.EquipmentSource.IsOffHand())
+            {
+                ThingWithComps offHandEquip = stance.verb.EquipmentSource;
+
+                //Check if verb is one from a offhand weapon. 
+                if (offHandEquip.GetComp<CompEquippable>() != null && offHandEquip != stanceTracker.pawn.equipment.Primary)
+                {
+                    stanceTracker.pawn.SetStancesOffHand(stance);
+                }
             }
         }
     }

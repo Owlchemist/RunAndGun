@@ -1,8 +1,8 @@
 ﻿using Verse;
 using HarmonyLib;
-using Settings = RunGunAndDestroy.ModSettings_RunAndDestroy;
+using Settings = SumGunFun.ModSettings_SumGunFun;
 
-namespace RunGunAndDestroy
+namespace SumGunFun
 {
     [HarmonyPatch(typeof(VerbProperties), nameof(VerbProperties.AdjustedAccuracy))]
     static class Patch_AdjustedAccuracy
@@ -13,8 +13,8 @@ namespace RunGunAndDestroy
             {
                 return __result;
             }
-            var curStance = tracker.pawn.stances?.curStance.GetType().Name;
-            if (curStance == nameof(Stance_RunAndGun) || curStance == nameof(Stance_RunAndGun_Cooldown))
+            var curStance = tracker.pawn.stances?.curStance;
+            if (curStance is Stance_RunAndGun || curStance is Stance_RunAndGun_Cooldown)
             {
                 return __result * (tracker.pawn.IsColonist ? Settings.accuracyModifierPlayer : Settings.accuracyModifier);
             }

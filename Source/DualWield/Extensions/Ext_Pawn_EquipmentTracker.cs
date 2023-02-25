@@ -1,7 +1,7 @@
 ﻿using RimWorld;
 using Verse;
 
-namespace RunGunAndDestroy.DualWield
+namespace SumGunFun.DualWield
 {
     static class Ext_Pawn_EquipmentTracker
     {

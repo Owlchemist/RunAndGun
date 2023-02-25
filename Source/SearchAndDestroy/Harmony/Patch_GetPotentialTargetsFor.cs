@@ -4,7 +4,7 @@ using Verse;
 using Verse.AI;
 using System.Collections.Generic;
 
-namespace RunGunAndDestroy
+namespace SumGunFun
 {
     [HarmonyPatch(typeof(AttackTargetsCache), nameof(AttackTargetsCache.GetPotentialTargetsFor))]
     static class Patch_GetPotentialTargetsFor

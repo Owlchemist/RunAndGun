@@ -1,9 +1,10 @@
 ﻿using System;
 using HarmonyLib;
 using Verse;
+using SumGunFun.DualWield;
 using RimWorld;
 
-namespace RunGunAndDestroy
+namespace SumGunFun
 {
     //TODO: This should probably be a transpiler
     [HarmonyPatch(typeof(Verb), nameof(Verb.TryStartCastOn), new Type[] { typeof(LocalTargetInfo), typeof(LocalTargetInfo), typeof(bool), typeof(bool), typeof(bool), typeof(bool) })]
@@ -33,8 +34,8 @@ namespace RunGunAndDestroy
             }
             else return true;
 
-            var curStance = pawn.stances.curStance.GetType().Name;
-            if (curStance == nameof(Stance_RunAndGun) || curStance == nameof(Stance_RunAndGun_Cooldown))
+            var curStance = pawn.stances.curStance;
+            if (curStance is Stance_RunAndGun || curStance is Stance_RunAndGun_Cooldown)
             {
                 return false;
             }
@@ -57,6 +58,15 @@ namespace RunGunAndDestroy
             }
             else __instance.WarmupComplete();
             return false;
+        }
+        static void Postfix(Verb __instance, LocalTargetInfo castTarg, ref bool __result)
+        {
+            //Check if it's an enemy that's attacked, and not a fire or an arguing husband
+            //TODO: optimize this, this should be gated
+            if (__instance.caster is Pawn casterPawn && !casterPawn.InMentalState && castTarg.Thing is not Fire)
+            {
+                casterPawn.TryStartOffHandAttack(castTarg, ref __result);
+            }
         }
     }
 }

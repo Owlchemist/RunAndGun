@@ -2,14 +2,18 @@
 using RimWorld;
 using System;
 using Verse;
-using Settings = RunGunAndDestroy.ModSettings_RunAndDestroy;
+using Settings = SumGunFun.ModSettings_SumGunFun;
 
-namespace RunGunAndDestroy.DualWield
+namespace SumGunFun.DualWield
 {
     [HarmonyPatch(typeof(VerbProperties), nameof(VerbProperties.AdjustedCooldown))]
     [HarmonyPatch(new Type[]{typeof(Tool), typeof(Pawn), typeof(Thing)})]
     class Patch_VerbProperties_AdjustedCooldown
     {
+        static bool Prepare()
+        {
+            return Settings.dualWieldEnabled;
+        }
         static void Postfix(VerbProperties __instance, Thing equipment, Pawn attacker, ref float __result)
         {
             if (attacker != null && attacker.skills != null && __instance.category != VerbCategory.BeatFire)

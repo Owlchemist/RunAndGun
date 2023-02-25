@@ -1,9 +1,9 @@
 using Verse;
 using System.Linq;
 using System.Collections.Generic;
-using Settings = RunGunAndDestroy.ModSettings_RunAndDestroy;
+using Settings = SumGunFun.ModSettings_SumGunFun;
 
-namespace RunGunAndDestroy
+namespace SumGunFun
 {
 	static class StorageUtility
 	{
@@ -36,12 +36,12 @@ namespace RunGunAndDestroy
 		}
 		public static bool IsTwoHanded(this Def def)
 		{
-			return Settings.twoHandSelectionCache.Contains(def.shortHash);
+			return Settings.twoHandersCache.Contains(def.shortHash);
 		}
 
 		public static bool CanBeOffHand(this Def def)
 		{
-			return Settings.dualWieldSelectionCache.Contains(def.shortHash);
+			return Settings.offHandersCache.Contains(def.shortHash);
 		}
 	}
 	class RNDStorage : GameComponent
@@ -49,7 +49,7 @@ namespace RunGunAndDestroy
 		public HashSet<Pawn> RnG = new HashSet<Pawn>();
 		public HashSet<Pawn> SnD = new HashSet<Pawn>();
 		public HashSet<Thing> offhands = new HashSet<Thing>();
-		public Dictionary<int, Pawn_StanceTracker> stancesOffhand = new Dictionary<int, Pawn_StanceTracker>();
+		public Dictionary<Pawn, Pawn_StanceTracker> stancesOffhand = new Dictionary<Pawn, Pawn_StanceTracker>();
 		public static RNDStorage _instance;
 		public RNDStorage(Game game)
 		{ 
@@ -61,6 +61,8 @@ namespace RunGunAndDestroy
 			base.ExposeData();
 			Scribe_Collections.Look(ref RnG, "RnG", LookMode.Reference);
 			Scribe_Collections.Look(ref SnD, "SnD", LookMode.Reference);
+			Scribe_Collections.Look(ref offhands, "offhands", LookMode.Reference);
+			Scribe_Collections.Look(ref stancesOffhand, "stancesOffhand", LookMode.Reference, LookMode.Reference);
 
 			if (Scribe.mode == LoadSaveMode.PostLoadInit)
 			{

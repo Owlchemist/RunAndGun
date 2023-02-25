@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Verse;
 
-namespace RunGunAndDestroy.DualWield
+namespace SumGunFun.DualWield
 {
     public static class Ext_Pawn
     {
@@ -12,20 +12,20 @@ namespace RunGunAndDestroy.DualWield
         }
         public static Pawn_StanceTracker GetStanceeTrackerOffHand(this Pawn instance)
         {
-            if (!RNDStorage._instance.stancesOffhand.TryGetValue(instance.thingIDNumber, out Pawn_StanceTracker pawn_StanceTracker))
+            if (!RNDStorage._instance.stancesOffhand.TryGetValue(instance, out Pawn_StanceTracker pawn_StanceTracker))
             {
                 pawn_StanceTracker = new Pawn_StanceTracker(instance);
-                RNDStorage._instance.stancesOffhand.Add(instance.thingIDNumber, pawn_StanceTracker);
+                RNDStorage._instance.stancesOffhand.Add(instance, pawn_StanceTracker);
             }
             return pawn_StanceTracker;
         }
         public static void SetStancesOffHand(this Pawn instance, Stance newStance)
         {
             Pawn_StanceTracker stanceTracker;
-            if (!RNDStorage._instance.stancesOffhand.TryGetValue(instance.thingIDNumber, out stanceTracker))
+            if (!RNDStorage._instance.stancesOffhand.TryGetValue(instance, out stanceTracker))
             {
                 stanceTracker = new Pawn_StanceTracker(instance);
-                RNDStorage._instance.stancesOffhand.Add(instance.thingIDNumber, stanceTracker);
+                RNDStorage._instance.stancesOffhand.Add(instance, stanceTracker);
             }
             stanceTracker.SetStance(newStance);
         }

@@ -5,43 +5,43 @@ using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 using Verse.AI;
+using Settings = SumGunFun.ModSettings_SumGunFun;
 
-namespace RunGunAndDestroy.DualWield
+namespace SumGunFun.DualWield
 {
     [HarmonyPatch(typeof(FloatMenuMakerMap), nameof(FloatMenuMakerMap.AddHumanlikeOrders))]
     class Patch_FloatMenuMakerMap_AddHumanlikeOrders
     {
-        static void Postfix(Vector3 clickPos, Pawn pawn, ref List<FloatMenuOption> opts)
+        static bool Prepare()
+        {
+            return Settings.dualWieldEnabled;
+        }
+
+        static void Postfix(Vector3 clickPos, Pawn pawn, List<FloatMenuOption> opts)
         {
             IntVec3 c = IntVec3.FromVector3(clickPos);
 
+            //Right click yourself to drop your offhand weapon
             foreach (LocalTargetInfo current in GenUI.TargetsAt(clickPos, TargetingParameters.ForSelf(pawn), true))
             {
                 if (pawn.equipment.TryGetOffHandEquipment(out ThingWithComps eq))
                 {
                     FloatMenuOption unequipOffHandOption = new FloatMenuOption("DW_DropOffHand".Translate(eq.LabelShort), new Action(delegate {
                         pawn.jobs.TryTakeOrderedJob(new Job(JobDefOf.DropEquipment, eq));
-                    })); //TODO translation
+                    }));
                     opts.Add(unequipOffHandOption);
                 }
             }
 
-            if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation))
+            if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) && pawn.equipment != null)
             {
-                if (pawn.equipment != null)
+                List<Thing> thingList = c.GetThingList(pawn.Map);
+                for (int i = thingList.Count; i-- > 0;)
                 {
-                    ThingWithComps equipment = null;
-                    List<Thing> thingList = c.GetThingList(pawn.Map);
-                    for (int i = 0; i < thingList.Count; i++)
+                    if (thingList[i] is ThingWithComps equipment && equipment.GetComp<CompEquippable>() != null)
                     {
-                        if (thingList[i].TryGetComp<CompEquippable>() != null)
-                        {
-                            equipment = (ThingWithComps)thingList[i];
-                            FloatMenuOption equipOffHandOption = GetEquipOffHandOption(pawn, equipment);
-                            opts.Add(equipOffHandOption);
-                        }
+                        opts.Add(GetEquipOffHandOption(pawn, equipment));
                     }
-
                 }
             }
         }
@@ -101,7 +101,5 @@ namespace RunGunAndDestroy.DualWield
 
             return menuItem;
         }
-
-
     }
 }

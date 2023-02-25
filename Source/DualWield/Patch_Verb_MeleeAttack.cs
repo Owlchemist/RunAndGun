@@ -3,12 +3,17 @@ using RimWorld;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 using Verse;
+using Settings = SumGunFun.ModSettings_SumGunFun;
 
-namespace RunGunAndDestroy.DualWield
+namespace SumGunFun.DualWield
 {
     [HarmonyPatch(typeof(Verb_MeleeAttack), nameof(Verb_MeleeAttack.TryCastShot))]
     class Patch_Verb_MeleeAttack_TryCastShot
     {
+        static bool Prepare()
+        {
+            return Settings.dualWieldEnabled;
+        }
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             bool found = false;

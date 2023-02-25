@@ -1,6 +1,6 @@
 ﻿using Verse;
 
-namespace RunGunAndDestroy
+namespace SumGunFun
 {
     public class WeaponForbidden : DefModExtension { }
 }

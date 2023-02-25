@@ -1,7 +1,7 @@
 ﻿using RimWorld;
 using Verse;
 
-namespace RunGunAndDestroy
+namespace SumGunFun
 {
     [DefOf]
     public static class DW_DefOff

@@ -5,7 +5,7 @@ using System.Text;
 using UnityEngine;
 using Verse;
 
-namespace RunGunAndDestroy.DualWield
+namespace SumGunFun.DualWield
 {
     class Dialog_Weapon_Rotation : Dialog_NodeTree
     {

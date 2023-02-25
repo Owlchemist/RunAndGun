@@ -4,9 +4,9 @@ using HarmonyLib;
 using Verse;
 using UnityEngine;
 using RimWorld;
-using Settings = RunGunAndDestroy.ModSettings_RunAndDestroy;
+using Settings = SumGunFun.ModSettings_SumGunFun;
 
-namespace RunGunAndDestroy
+namespace SumGunFun
 {
     [HarmonyPatch(typeof(Pawn), nameof(Pawn.GetGizmos))]
     public class Patch_PawnGetGizmos

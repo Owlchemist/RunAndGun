@@ -1,13 +1,17 @@
 ﻿using HarmonyLib;
 using UnityEngine;
 using Verse;
-using Settings = RunGunAndDestroy.ModSettings_RunAndDestroy;
+using Settings = SumGunFun.ModSettings_SumGunFun;
 
-namespace RunGunAndDestroy.DualWield
+namespace SumGunFun.DualWield
 {
     [HarmonyPatch(typeof(PawnRenderer), nameof(PawnRenderer.RenderPawnAt))]
     class Patch_PawnRenderer_RenderPawnAt
     {
+        static bool Prepare()
+        {
+            return Settings.dualWieldEnabled;
+        }
         static void Postfix(Pawn ___pawn)
         {
             if (___pawn.Spawned && !___pawn.Dead) ___pawn.GetStanceeTrackerOffHand().StanceTrackerDraw();
@@ -17,6 +21,10 @@ namespace RunGunAndDestroy.DualWield
     [HarmonyPatch(typeof(PawnRenderer), nameof(PawnRenderer.DrawEquipmentAiming))]
     class Patch_PawnRenderer_DrawEquipmentAiming
     {
+        static bool Prepare()
+        {
+            return Settings.dualWieldEnabled;
+        }
         static bool Prefix(PawnRenderer __instance, Thing eq, ref Vector3 drawLoc, ref float aimAngle, ref Pawn ___pawn)
         {
             ThingWithComps offHandEquip = null;

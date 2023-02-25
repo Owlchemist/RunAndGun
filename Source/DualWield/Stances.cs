@@ -1,7 +1,7 @@
 ﻿using Verse;
 using UnityEngine;
 
-namespace RunGunAndDestroy.DualWield
+namespace SumGunFun.DualWield
 {
     class Stance_Cooldown_DW : Stance_Cooldown
     {

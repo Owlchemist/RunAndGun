@@ -2,7 +2,7 @@
 using Verse;
 using Verse.AI;
 
-namespace RunGunAndDestroy
+namespace SumGunFun
 {
     [HarmonyPatch(typeof(JobGiver_Orders), nameof(JobGiver_Orders.TryGiveJob))]
     static class Patch_TryGiveJob

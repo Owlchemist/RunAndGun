@@ -3,9 +3,9 @@ using Verse;
 using HarmonyLib;
 using RimWorld;
 using Verse.AI;
-using Settings = RunGunAndDestroy.ModSettings_RunAndDestroy;
+using Settings = SumGunFun.ModSettings_SumGunFun;
 
-namespace RunGunAndDestroy
+namespace SumGunFun
 {
     [HarmonyPatch(typeof(Pawn), nameof(Pawn.SpawnSetup))]
     static class Patch_SpawnSetup

@@ -1,7 +1,7 @@
 ﻿using RimWorld;
 using Verse;
 
-namespace RunGunAndDestroy.DualWield
+namespace SumGunFun.DualWield
 {
     public static class Ext_Verb
     {

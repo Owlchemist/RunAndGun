@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using System.Reflection.Emit;
 using Verse;
 using Verse.AI;
+using Settings = SumGunFun.ModSettings_SumGunFun;
 
-namespace RunGunAndDestroy.DualWield
+namespace SumGunFun.DualWield
 {
     [HarmonyPatch(typeof(JobDriver_Wait), nameof(JobDriver_Wait.CheckForAutoAttack))]
     class Patch_Jobdriver_Wait_CheckForAutoAttack
     {
+        static bool Prepare()
+        {
+            return Settings.dualWieldEnabled;
+        }
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             bool found = false;

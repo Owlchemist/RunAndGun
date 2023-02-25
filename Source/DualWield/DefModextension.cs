@@ -1,9 +1,9 @@
 ﻿using Verse;
 
-namespace RunGunAndDestroy
+namespace SumGunFun
 {
-    public class DualWieldable : DefModExtension {}
-    public class TwoHanded : DefModExtension {}
+    public class OffHander : DefModExtension {}
+    public class TwoHander : DefModExtension {}
     public class CustomRotation : DefModExtension
     {
         public int extraRotation = 0;
