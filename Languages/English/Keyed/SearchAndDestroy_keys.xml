@@ -5,4 +5,7 @@
 	<SD_Gizmo_Melee_Description>Activate search and destroy for a melee pawn.</SD_Gizmo_Melee_Description>
 	<SD_Gizmo_Ranged_Label>Ranged search and destroy</SD_Gizmo_Ranged_Label>
 	<SD_Gizmo_Ranged_Description>Activate search and destroy for a ranged pawn.</SD_Gizmo_Ranged_Description>
+	
+	<SD_EnableSearchAndDestroy_Title>Enable Search And Destroy module</SD_EnableSearchAndDestroy_Title>
+	<SD_EnableSearchAndDestroy_Description>If disabled, your pawns will no longer have the search and destroy functionality.</SD_EnableSearchAndDestroy_Description>
 </LanguageData>

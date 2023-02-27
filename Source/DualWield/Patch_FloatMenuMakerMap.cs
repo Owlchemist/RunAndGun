@@ -19,23 +19,21 @@ namespace Tacticowl.DualWield
 
         static void Postfix(Vector3 clickPos, Pawn pawn, List<FloatMenuOption> opts)
         {
-            IntVec3 c = IntVec3.FromVector3(clickPos);
-
             //Right click yourself to drop your offHand weapon
             foreach (LocalTargetInfo current in GenUI.TargetsAt(clickPos, TargetingParameters.ForSelf(pawn), true))
             {
                 if (pawn.GetOffHander(out ThingWithComps eq))
                 {
-                    FloatMenuOption unequipOffHandOption = new FloatMenuOption("DW_DropOffHand".Translate(eq.LabelShort), new Action(delegate {
+                    opts.Add(new FloatMenuOption("DW_DropOffHand".Translate(eq.LabelShort), new Action(delegate 
+                    {
                         pawn.jobs.TryTakeOrderedJob(new Job(JobDefOf.DropEquipment, eq));
-                    }));
-                    opts.Add(unequipOffHandOption);
+                    })));
                 }
             }
 
             if (pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation) && pawn.equipment != null)
             {
-                List<Thing> thingList = c.GetThingList(pawn.Map);
+                List<Thing> thingList = IntVec3.FromVector3(clickPos).GetThingList(pawn.Map);
                 for (int i = thingList.Count; i-- > 0;)
                 {
                     if (thingList[i] is ThingWithComps equipment && equipment.GetComp<CompEquippable>() != null)

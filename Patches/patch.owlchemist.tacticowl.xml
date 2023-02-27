@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+	<Operation Class="PatchOperationSequence">
+		<operations>
+			<li Class="PatchOperationAddModExtension">
+				<xpath>Defs/ThingDef[equippedAngleOffset = -25]</xpath>
+				<value>
+					<li Class="Tacticowl.CustomRotation">
+						<extraRotation>45</extraRotation>
+					</li>
+				</value>
+			</li>
+			<li Class="PatchOperationInsert">
+				<xpath>Defs/ThinkTreeDef[defName = "Humanlike"]/thinkRoot[@Class = "ThinkNode_Priority"]/subNodes/li[@Class="ThinkNode_ConditionalColonist"]</xpath> <!--Priority is important here, hence the insert after this specific subNode--> 
+				<value> 
+					<!-- Do search and destroy instead of waiting -->
+					<li Class="Tacticowl.ThinkNode_ConditionalSearchAndDestroy">
+						<subNodes>
+							<li Class="ThinkNode_Priority">
+								<subNodes>
+									<li Class="JobGiver_MoveToStandable"/>
+									<li Class="JobGiver_AIFightEnemies">
+										<targetAcquireRadius>200</targetAcquireRadius>
+										<targetKeepRadius>32</targetKeepRadius>
+									</li>
+									<li Class="JobGiver_AIGotoNearestHostile" />
+								</subNodes>
+							</li>
+						</subNodes>
+					</li>
+				</value>
+			</li>
+			<!-- Sync with VFE's two-handed system -->
+			<li Class="PatchOperationAddModExtension">
+				<success>Always</success>
+				<xpath>Defs/ThingDef[modExtensions/li[@Class="VFECore.ThingDefExtension" and usableWithShields[text()="false"]]]</xpath>
+				<value>
+					<li Class="Tacticowl.TwoHander" />
+				</value>
+			</li>
+			<li Class="PatchOperationAddModExtension">
+				<success>Always</success>
+				<xpath>Defs/ThingDef[modExtensions/li[@Class="VFECore.ThingDefExtension" and usableWithShields[text()="true"]]]</xpath>
+				<value>
+					<li Class="Tacticowl.OffHander" />
+				</value>
+			</li>
+			<!-- Try to handle a few distinct weapon types accordingly -->
+			<li Class="PatchOperationAddModExtension">
+				
+				<xpath>Defs/ThingDef[contains(label, "bow") or 
+					contains(label, "shotgun") or 
+					contains(label, "warcasket") or 
+					contains(label, "launcher") or 
+					defName="MeleeWeapon_BreachAxe" or 
+					statBases/Mass >= 2.0]</xpath>
+				<value>
+					<li Class="Tacticowl.TwoHander" />
+				</value>
+			</li>
+			<!-- Disabling this for now, reports that it doesn't work...
+				<li Class="PatchOperationInsert">
+				<success>Always</success>
+				<xpath>Defs/ThinkTreeDef[defName = "AndroidLike"]/thinkRoot[@Class = "ThinkNode_Priority"]/subNodes/li[@Class="ThinkNode_QueuedJob"]</xpath>  
+				<value>
+				<li Class="Tacticowl.ThinkNode_ConditionalSearchAndDestroy">
+				<subNodes>
+				<li Class="ThinkNode_Priority">
+				<subNodes>
+				<li Class="JobGiver_AIFightEnemies">
+				<targetAcquireRadius>200</targetAcquireRadius>
+				<targetKeepRadius>72</targetKeepRadius>
+				</li>
+				<li Class="JobGiver_AIGotoNearestHostile" />
+				</subNodes>
+				</li>
+				</subNodes>
+				</li>
+				</value>
+				</li>
+			-->
+		</operations>
+	</Operation>
+</Patch>

@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ModMetaData>
-	<name>Run Gun and Destroy (unlisted beta)</name>
+	<name>Tacticowl (unlisted beta)</name>
 	<author>Roolo, Owlchemist</author>
 	<supportedVersions>
 		<li>1.4</li>
 	</supportedVersions>
-	<modVersion>2.0.7</modVersion>
-	<packageId>Owlchemist.RunGunAndDestroy</packageId>
+	<modVersion>2.0.10</modVersion>
+	<packageId>Owlchemist.Tacticowl</packageId>
 	<modDependencies>
 		<li>
 			<packageId>brrainz.harmony</packageId>
@@ -14,9 +14,10 @@
 			<steamWorkshopUrl>steam://url/CommunityFilePage/2009463077</steamWorkshopUrl>
 		</li>
 	</modDependencies>
-	<description>This is a continuation, overhaul and merging of the mods "Run and Gun" and "Seach and Destroy", by Roolo. It allows pawns - both your own and AI controlled - to shoot while moving, as well as enabling colonists to actively move towards and engage hostiles.</description>
+	<description>This is a continuation, overhaul and merging of Roolo's three combat mods - "RunAndGun", "Search and Destroy", and "Dual Wield".</description>
 	<incompatibleWith>
 		<li>roolo.searchanddestroy</li>
 		<li>roolo.runandgun</li>
+		<li>roolo.dualwield</li>
 	</incompatibleWith>
 </ModMetaData>

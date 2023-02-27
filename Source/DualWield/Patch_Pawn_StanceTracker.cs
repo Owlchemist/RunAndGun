@@ -13,13 +13,13 @@ namespace Tacticowl.DualWield
         }
 		static bool Postfix(bool __result, Pawn_StanceTracker __instance, Pawn ___pawn)
 		{
-			if (__result || ___pawn.RaceProps.intelligence == Intelligence.Animal || !___pawn.HasOffHand()) return __result;
-			else
+			if (!__result && ___pawn.HasOffHand())
 			{
 				var stancesOffHand = ___pawn.GetOffHandStance();
 				if (stancesOffHand is Stance_Cooldown && !___pawn.RunsAndGuns()) return stancesOffHand.StanceBusy;
 				else return false;
 			}
+			return __result;
 		}
 	}
 }

@@ -87,8 +87,8 @@ namespace Tacticowl
 					for (int j = modExtensions.Count; j-- > 0;)
 					{
 						var ext = modExtensions[j];
-						if (ext is TwoHander || ext is WeaponForbidden) twoHandersCache.Add(shortHash);
-						else if (ext is OffHander) offHandersCache.Add(shortHash);
+						if (ext is OffHander) offHandersCache.Add(shortHash);
+						else if (ext is TwoHander || ext is WeaponForbidden) twoHandersCache.Add(shortHash);
 					}
 				}
 				
@@ -381,7 +381,7 @@ namespace Tacticowl
 			}
 			catch (System.Exception ex)
 			{
-				Log.Error("[Run and Destroy] Error writing Run and Destroy settings. Skipping...\n" + ex);   
+				Log.Error("[Tacticowl] Error writing settings. Skipping...\n" + ex);   
 			}
 			base.WriteSettings();
 		}   
@@ -423,13 +423,34 @@ namespace Tacticowl
 			
 			base.ExposeData();
 		}
-		public static bool enableForAI = true, enableForAnimals, runAndGunEnabled = true, searchAndDestroyEnabled = true, dualWieldEnabled = true, logging, usingJecsTools;
-		public static int enableForFleeChance = 50;
+		public static bool enableForAI = true,
+			enableForAnimals,
+			runAndGunEnabled = true,
+			searchAndDestroyEnabled = true,
+			dualWieldEnabled = true,
+			logging,
+			usingJecsTools,
+			meleeMirrored = true,
+			rangedMirrored = true;
+		public static int enableForFleeChance = 50,
+			NPCDualWieldChance = 10;
 		public static float accuracyModifier = 0.65f,
 			accuracyModifierPlayer = 0.65f,
 			accuracyModifierMechs = 0.8f,
 			movementModifierHeavy = 0.3f,
-			movementModifierLight = 0.65f;
+			movementModifierLight = 0.65f,
+			staticCooldownPOffHand = 20f,
+			staticCooldownPMainHand = 10f,
+			staticAccPOffHand = 10f,
+			staticAccPMainHand = 10f,
+			dynamicCooldownP = 5f,
+			dynamicAccP = 0.5f,
+			meleeAngle = 270f,
+			rangedAngle = 135f,
+			meleeXOffset = 0.4f,
+			rangedXOffset = 0.1f,
+			meleeZOffset,
+			rangedZOffset;
         public static HashSet<ushort> heavyWeaponsCache,
 			 forbiddenWeaponsCache,
 			 offHandersCache,
@@ -447,26 +468,6 @@ namespace Tacticowl
 		public static Vector2 scrollPos;
 		public static Tab selectedTab = Tab.runAndGun;
 		public enum Tab { runAndGun, heavyWeapons, forbiddenWeapons, searchAndDestroy, dualWield, offHands, twoHanders, customRotations, offsets };
-		#endregion
-	
-		#region dual wield
-		public static bool meleeMirrored = true,
-			rangedMirrored = true;
-
-        public static float staticCooldownPOffHand = 20f,
-			staticCooldownPMainHand = 10f,
-			staticAccPOffHand = 10f,
-			staticAccPMainHand = 10f,
-			dynamicCooldownP = 5f,
-			dynamicAccP = 0.5f,
-			meleeAngle = 270f,
-			rangedAngle = 135f,
-			meleeXOffset = 0.4f,
-			rangedXOffset = 0.1f,
-			meleeZOffset,
-			rangedZOffset;
-
-        public static int NPCDualWieldChance = 10;
 		#endregion
 	}
 }

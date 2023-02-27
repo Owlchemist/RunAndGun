@@ -33,7 +33,7 @@ namespace Tacticowl.DualWield
 
         public static void CheckDWStance(Pawn pawn)
         {
-            if (pawn.Spawned && pawn.HasOffHand()) pawn.GetOffHandStanceTracker().StanceTrackerTick();
+            if (pawn.HasOffHand()) pawn.GetOffHandStanceTracker().StanceTrackerTick();
         }
     }
     //Also try start off hand weapons attack when trystartattack is called

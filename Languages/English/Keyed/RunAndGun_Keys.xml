@@ -36,6 +36,14 @@
 	<RG_Tab_SearchAndDestroy>Search and Destroy</RG_Tab_SearchAndDestroy>
 	<RG_Tab_HeavyWeapons>Heavy weapons</RG_Tab_HeavyWeapons>
 	<RG_Tab_ForbiddenWeapons>Forbidden weapons</RG_Tab_ForbiddenWeapons>
+	<RG_Tab_DualWield>Dual Wield</RG_Tab_DualWield>
+	<DW_Tab_OffHands>Allowed off-handers</DW_Tab_OffHands>
+	<DW_Tab_Twohanders>Two-handers</DW_Tab_Twohanders>
+	<DW_Tab_CustomRotations>Custom rotations</DW_Tab_CustomRotations>
+	<DW_Tab_Offsets>Custom offsets</DW_Tab_Offsets>
 	
 	<RG_Forbidden_Weapons>These weapons cannot be used while running.</RG_Forbidden_Weapons>
+	
+	<RG_EnableRunAndGun_Title>Enable Run and Gun module</RG_EnableRunAndGun_Title>
+	<RG_EnableRunAndGun_Description>If disabled, pawns may not shoot while running.</RG_EnableRunAndGun_Description>
 </LanguageData>

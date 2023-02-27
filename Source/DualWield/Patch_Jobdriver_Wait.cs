@@ -30,7 +30,7 @@ namespace Tacticowl.DualWield
         }
         public static bool FullBodyAndOffHandBusy(Pawn_StanceTracker instance)
         {
-            if (instance.pawn.equipment != null && instance.pawn.GetOffHander(out ThingWithComps twc))
+            if (instance.pawn.HasOffHand() && instance.pawn.GetOffHander(out ThingWithComps twc))
             {
                 return instance.pawn.GetOffHandStanceTracker().FullBodyBusy && instance.FullBodyBusy;
             }

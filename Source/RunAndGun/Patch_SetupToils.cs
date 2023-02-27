@@ -20,12 +20,16 @@ namespace Tacticowl
 			
 			__instance.toils[0].AddPreTickAction(delegate
 			{
+				int ticker = 10;
 				Pawn pawn = jobDriver.pawn;
-				if (pawn.IsHashIntervalTick(10) &&  
-					(pawn.Drafted || (!pawn.IsColonist && Settings.enableForAI) || (pawn.RaceProps.Animal && Settings.enableForAnimals)) && !pawn.Downed && 
-					!pawn.HasAttachment(ThingDefOf.Fire))
+				if (ticker-- == 0)
 				{
-					CheckForAutoAttack(pawn, __instance);
+					ticker = 10;
+					if ((pawn.Drafted || ((pawn.Faction == null || !pawn.Faction.def.isPlayer) && Settings.enableForAI) || (pawn.RaceProps.Animal && Settings.enableForAnimals)) && !pawn.Downed && 
+						!pawn.HasAttachment(ThingDefOf.Fire))
+					{
+						CheckForAutoAttack(pawn, __instance);
+					}
 				}
 			});
 		}
