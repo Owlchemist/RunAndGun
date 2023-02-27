@@ -2,9 +2,9 @@
 using RimWorld;
 using System;
 using Verse;
-using Settings = SumGunFun.ModSettings_SumGunFun;
+using Settings = Tacticowl.ModSettings_Tacticowl;
 
-namespace SumGunFun.DualWield
+namespace Tacticowl.DualWield
 {
     [HarmonyPatch(typeof(VerbProperties), nameof(VerbProperties.AdjustedCooldown))]
     [HarmonyPatch(new Type[]{typeof(Tool), typeof(Pawn), typeof(Thing)})]
@@ -23,11 +23,11 @@ namespace SumGunFun.DualWield
                 {
                     return;
                 }
-                if (equipment != null && equipment is ThingWithComps twc && twc.IsOffHand())
+                if (equipment != null && equipment is ThingWithComps twc && twc.IsOffHandedWeapon())
                 {
                     __result = CalcCooldownPenalty(__result, skillRecord, Settings.staticCooldownPOffHand / 100f);
                 }
-                else if (attacker.equipment != null && attacker.equipment.TryGetOffHandEquipment(out ThingWithComps offHandEq))
+                else if (attacker.equipment != null && attacker.GetOffHander(out ThingWithComps offHandEq))
                 {
                     __result = CalcCooldownPenalty(__result, skillRecord, Settings.staticCooldownPMainHand / 100f);
                 }
@@ -56,11 +56,11 @@ namespace SumGunFun.DualWield
                     return;
                 }
                 SkillRecord skillRecord = __instance.IsMeleeAttack ? pawn.skills.GetSkill(SkillDefOf.Melee) : pawn.skills.GetSkill(SkillDefOf.Shooting);
-                if (equipment is ThingWithComps twc && twc.IsOffHand())
+                if (equipment is ThingWithComps twc && twc.IsOffHandedWeapon())
                 {
                     __result = CalcAccuracyPenalty(__result, skillRecord, Settings.staticAccPOffHand / 100f);
                 }
-                else if (pawn.equipment.TryGetOffHandEquipment(out ThingWithComps offHandEq))
+                else if (pawn.GetOffHander(out ThingWithComps offHandEq))
                 {
                     __result = CalcAccuracyPenalty(__result, skillRecord, Settings.staticAccPMainHand / 100f);
                 }

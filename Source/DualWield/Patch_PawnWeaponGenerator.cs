@@ -1,11 +1,10 @@
 ﻿using HarmonyLib;
 using RimWorld;
-using System.Collections.Generic;
 using System.Linq;
 using Verse;
-using Settings = SumGunFun.ModSettings_SumGunFun;
+using Settings = Tacticowl.ModSettings_Tacticowl;
 
-namespace SumGunFun.DualWield
+namespace Tacticowl.DualWield
 {
     [HarmonyPatch(typeof(PawnWeaponGenerator), nameof(PawnWeaponGenerator.TryGenerateWeaponFor))]
     class Patch_PawnWeaponGenerator_TryGenerateWeaponFor
@@ -18,43 +17,29 @@ namespace SumGunFun.DualWield
         {
             if (pawn.RaceProps.Humanlike && Rand.Chance(((float)Settings.NPCDualWieldChance)/100f))
             {
+                if (pawn.equipment == null && pawn.equipment.Primary == null && pawn.equipment.Primary.def.IsTwoHanded())
+                {
+                    return;
+                }
                 float randomInRange = pawn.kindDef.weaponMoney.RandomInRange;
-                
-                if (pawn.equipment != null && pawn.equipment.Primary != null && pawn.equipment.Primary.def.IsTwoHanded())
+                var workingWeapons = PawnWeaponGenerator.workingWeapons;
+                for (int i = PawnWeaponGenerator.allWeaponPairs.Count; i-- > 0;)
                 {
-                    return;
-                }
-                if (pawn.equipment == null || pawn.equipment.Primary == null)
-                {
-                    return;
-                }
-                for (int i = 0; i < PawnWeaponGenerator.allWeaponPairs.Count; i++)
-                {
-                    ThingStuffPair w = PawnWeaponGenerator.allWeaponPairs[i];
-                    if (w.Price <= randomInRange)
+                    ThingStuffPair weapon = PawnWeaponGenerator.allWeaponPairs[i];
+                    if (weapon.Price <= randomInRange && //Can accord the price?
+                        (pawn.kindDef.weaponTags == null || pawn.kindDef.weaponTags.Any(tag => weapon.thing.weaponTags.Contains(tag))) && //Valid tagging?
+                        (weapon.thing.generateAllowChance >= 1f || Rand.ChanceSeeded(weapon.thing.generateAllowChance, pawn.thingIDNumber ^ (int)weapon.thing.shortHash ^ 28554824))) //Pass chance?
                     {
-                        if (pawn.kindDef.weaponTags == null || pawn.kindDef.weaponTags.Any((string tag) => w.thing.weaponTags.Contains(tag)))
-                        {
-                            if (w.thing.generateAllowChance >= 1f || Rand.ChanceSeeded(w.thing.generateAllowChance, pawn.thingIDNumber ^ (int)w.thing.shortHash ^ 28554824))
-                            {
-                                PawnWeaponGenerator.workingWeapons.Add(w);
-                            }
-                        }
+                        workingWeapons.Add(weapon);
                     }
                 }
-                if (PawnWeaponGenerator.workingWeapons.Count == 0)
-                {
-                    return;
-                }
-                ThingStuffPair thingStuffPair;
-                IEnumerable<ThingStuffPair> matchingWeapons = PawnWeaponGenerator.workingWeapons.Where((ThingStuffPair tsp) =>
-                tsp.thing.CanBeOffHand() &&
-                !tsp.thing.IsTwoHanded());
-                if (matchingWeapons != null && matchingWeapons.TryRandomElementByWeight((ThingStuffPair w) => w.Commonality * w.Price, out thingStuffPair))
+
+                if (workingWeapons.Count > 0 && workingWeapons.Where(tsp => tsp.thing.CanBeOffHand() && !tsp.thing.IsTwoHanded()).
+                    TryRandomElementByWeight(w => w.Commonality * w.Price, out ThingStuffPair thingStuffPair))
                 {
                     ThingWithComps thingWithComps = (ThingWithComps)ThingMaker.MakeThing(thingStuffPair.thing, thingStuffPair.stuff);
                     PawnGenerator.PostProcessGeneratedGear(thingWithComps, pawn);
-                    pawn.equipment.AddOffHandEquipment(thingWithComps);
+                    pawn.SetOffHander(thingWithComps);
                 }
             }
         }

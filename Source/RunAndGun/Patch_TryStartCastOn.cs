@@ -1,10 +1,10 @@
 ﻿using System;
 using HarmonyLib;
 using Verse;
-using SumGunFun.DualWield;
+using Tacticowl.DualWield;
 using RimWorld;
 
-namespace SumGunFun
+namespace Tacticowl
 {
     //TODO: This should probably be a transpiler
     [HarmonyPatch(typeof(Verb), nameof(Verb.TryStartCastOn), new Type[] { typeof(LocalTargetInfo), typeof(LocalTargetInfo), typeof(bool), typeof(bool), typeof(bool), typeof(bool) })]

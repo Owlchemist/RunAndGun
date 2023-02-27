@@ -2,9 +2,9 @@
 using RimWorld;
 using System.Collections.Generic;
 using Verse;
-using Settings = SumGunFun.ModSettings_SumGunFun;
+using Settings = Tacticowl.ModSettings_Tacticowl;
 
-namespace SumGunFun.DualWield
+namespace Tacticowl.DualWield
 {
     [HarmonyPatch(typeof(Pawn_MeleeVerbs), nameof(Pawn_MeleeVerbs.GetUpdatedAvailableVerbsList))]
     class Patch_Pawn_MeleeVerbs_GetUpdatedAvailableVerbsList
@@ -15,11 +15,11 @@ namespace SumGunFun.DualWield
         }
         static void Postfix(List<VerbEntry> __result)
         {
-            //remove all offhand verbs so they're not used by for mainhand melee attacks.
+            //remove all offHand verbs so they're not used by for mainhand melee attacks.
             for (var i = __result.Count; i-- > 0;)
             {
                 var ve = __result[i];
-                if (ve.verb.EquipmentSource.IsOffHand()) __result.Remove(ve);
+                if (ve.verb.EquipmentSource.IsOffHandedWeapon()) __result.Remove(ve);
             }
         }
     }
@@ -31,29 +31,23 @@ namespace SumGunFun.DualWield
         {
             return Settings.dualWieldEnabled;
         }
-        static void Postfix(Pawn_MeleeVerbs __instance, Thing target, Verb verbToUse, bool surpriseAttack, ref bool __result, ref Pawn ___pawn)
+        static bool Postfix(bool __result, Pawn_MeleeVerbs __instance, Thing target, Verb verbToUse, bool surpriseAttack)
         {
-            var stance = ___pawn.GetStancesOffHand();
-            if (stance is Stance_Warmup_DW || stance is Stance_Cooldown) return;
-            if (___pawn.equipment == null || !___pawn.equipment.TryGetOffHandEquipment(out ThingWithComps offHandEquip))
+            Pawn pawn = __instance.pawn;
+            var stance = pawn.GetOffHandStance();
+            if (stance is Stance_Warmup_DW || stance is Stance_Cooldown || 
+                pawn.equipment == null || !pawn.GetOffHander(out ThingWithComps offHandEquip) || 
+                offHandEquip == pawn.equipment.Primary || pawn.InMentalState)
             {
-                return;
-            }
-            if (offHandEquip == ___pawn.equipment.Primary)
-            {
-                return;
-            }
-            if (___pawn.InMentalState)
-            {
-                return;
+                return __result;
             }
 
-            Verb verb = __instance.Pawn.TryGetMeleeVerbOffHand(target);
-            if (verb != null)
+            if (__instance.Pawn.TryGetMeleeVerbOffHand(target, out Verb verb))
             {
-                bool success = verb.OffhandTryStartCastOn(target);
-                __result = __result || (verb != null && success);
+                if (__result) return __result;
+                return verb.OffHandTryStartCastOn(target);
             }
+            return __result;
         }
     }
 }

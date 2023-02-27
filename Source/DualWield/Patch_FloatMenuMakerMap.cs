@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 using Verse.AI;
-using Settings = SumGunFun.ModSettings_SumGunFun;
+using Settings = Tacticowl.ModSettings_Tacticowl;
 
-namespace SumGunFun.DualWield
+namespace Tacticowl.DualWield
 {
     [HarmonyPatch(typeof(FloatMenuMakerMap), nameof(FloatMenuMakerMap.AddHumanlikeOrders))]
     class Patch_FloatMenuMakerMap_AddHumanlikeOrders
@@ -21,10 +21,10 @@ namespace SumGunFun.DualWield
         {
             IntVec3 c = IntVec3.FromVector3(clickPos);
 
-            //Right click yourself to drop your offhand weapon
+            //Right click yourself to drop your offHand weapon
             foreach (LocalTargetInfo current in GenUI.TargetsAt(clickPos, TargetingParameters.ForSelf(pawn), true))
             {
-                if (pawn.equipment.TryGetOffHandEquipment(out ThingWithComps eq))
+                if (pawn.GetOffHander(out ThingWithComps eq))
                 {
                     FloatMenuOption unequipOffHandOption = new FloatMenuOption("DW_DropOffHand".Translate(eq.LabelShort), new Action(delegate {
                         pawn.jobs.TryTakeOrderedJob(new Job(JobDefOf.DropEquipment, eq));
@@ -92,9 +92,9 @@ namespace SumGunFun.DualWield
                 }
                 menuItem = FloatMenuUtility.DecoratePrioritizedTask(new FloatMenuOption(text5, delegate
                 {
-                    equipment.SetForbidden(false, true);
-                    pawn.jobs.TryTakeOrderedJob(new Job(DW_DefOff.DW_EquipOffhand, equipment), JobTag.Misc);
                     FleckMaker.Static(equipment.DrawPos, equipment.Map, FleckDefOf.FeedbackEquip, 1f);
+                    equipment.SetForbidden(false, true);
+                    pawn.jobs.TryTakeOrderedJob(new Job(ResourceBank.JobDefOf.DW_EquipOffHand, equipment), JobTag.Misc);
                     PlayerKnowledgeDatabase.KnowledgeDemonstrated(ConceptDefOf.EquippingWeapons, KnowledgeAmount.Total);
                 }, MenuOptionPriority.High, null, null, 0f, null, null), pawn, equipment, "ReservedBy");
             }

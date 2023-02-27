@@ -2,9 +2,9 @@
 using RimWorld;
 using System.Collections.Generic;
 using Verse;
-using Settings = SumGunFun.ModSettings_SumGunFun;
+using Settings = Tacticowl.ModSettings_Tacticowl;
 
-namespace SumGunFun.DualWield
+namespace Tacticowl.DualWield
 {
     [HarmonyPatch(typeof(VerbTracker), nameof(VerbTracker.CreateVerbTargetCommand))]
     class Patch_VerbTracker_CreateVerbTargetCommand
@@ -19,7 +19,7 @@ namespace SumGunFun.DualWield
             {
                 CompEquippable ce = __instance.directOwner as CompEquippable;
 
-                if (peqt.pawn.equipment.TryGetOffHandEquipment(out ThingWithComps offHandEquip))
+                if (peqt.pawn.GetOffHander(out ThingWithComps offHandEquip))
                 {
                     if (offHandEquip != twc)
                     {
@@ -95,9 +95,9 @@ namespace SumGunFun.DualWield
 
                     if (verb.EquipmentSource is ThingWithComps twc && twc.ParentHolder is Pawn_EquipmentTracker peqt)
                     {
-                        //Remove offhand gizmo when dual wielding
-                        //Don't remove offhand gizmo when offhand weapon is the only weapon being carried by the pawn
-                        if (peqt.pawn.equipment.TryGetOffHandEquipment(out ThingWithComps offHandEquip) && offHandEquip == twc && offHandEquip != peqt.Primary)
+                        //Remove offHand gizmo when dual wielding
+                        //Don't remove offHand gizmo when offHand weapon is the only weapon being carried by the pawn
+                        if (peqt.pawn.GetOffHander(out ThingWithComps offHandEquip) && offHandEquip == twc && offHandEquip != peqt.Primary)
                         {
                             continue;
                         }

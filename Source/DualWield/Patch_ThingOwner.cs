@@ -1,8 +1,8 @@
 ﻿using HarmonyLib;
 using Verse;
-using Settings = SumGunFun.ModSettings_SumGunFun;
+using Settings = Tacticowl.ModSettings_Tacticowl;
 
-namespace SumGunFun.DualWield
+namespace Tacticowl.DualWield
 {
     [HarmonyPatch(typeof(ThingOwner<Thing>), nameof(ThingOwner<Thing>.Remove))]
     class Patch_ThingOwner_Remove
@@ -13,7 +13,7 @@ namespace SumGunFun.DualWield
         }
         static void Postfix(Thing item)
         {
-            item.SetOffhand(false);
+            item.SetWeaponAsOffHanded(false);
         }
     }
 }

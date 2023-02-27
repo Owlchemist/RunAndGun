@@ -1,8 +1,8 @@
 ﻿using HarmonyLib;
 using Verse;
-using Settings = SumGunFun.ModSettings_SumGunFun;
+using Settings = Tacticowl.ModSettings_Tacticowl;
 
-namespace SumGunFun.DualWield
+namespace Tacticowl.DualWield
 {
     [HarmonyPatch(typeof(Pawn_RotationTracker), nameof(Pawn_RotationTracker.UpdateRotation))]
     class Patch_Pawn_RotationTracker_UpdateRotation
@@ -14,7 +14,7 @@ namespace SumGunFun.DualWield
         static void Postfix(Pawn_RotationTracker __instance)
         {
             Pawn pawn = __instance.pawn;
-            if (pawn.GetStancesOffHand() is Stance_Busy stance_Busy && stance_Busy.focusTarg.IsValid && !pawn.pather.Moving)
+            if (pawn.HasOffHand() && pawn.GetOffHandStance() is Stance_Busy stance_Busy && stance_Busy.focusTarg.IsValid && !pawn.pather.Moving)
             {
                 if (stance_Busy.focusTarg.HasThing) __instance.Face(stance_Busy.focusTarg.Thing.DrawPos);
                 else __instance.FaceCell(stance_Busy.focusTarg.Cell);

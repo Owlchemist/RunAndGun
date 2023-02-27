@@ -1,8 +1,8 @@
 ﻿using Verse;
 using HarmonyLib;
-using Settings = SumGunFun.ModSettings_SumGunFun;
+using Settings = Tacticowl.ModSettings_Tacticowl;
 
-namespace SumGunFun
+namespace Tacticowl
 {
     [HarmonyPatch(typeof(VerbProperties), nameof(VerbProperties.AdjustedAccuracy))]
     static class Patch_AdjustedAccuracy

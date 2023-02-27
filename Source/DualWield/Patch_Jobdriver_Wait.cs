@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Reflection.Emit;
 using Verse;
 using Verse.AI;
-using Settings = SumGunFun.ModSettings_SumGunFun;
+using Settings = Tacticowl.ModSettings_Tacticowl;
 
-namespace SumGunFun.DualWield
+namespace Tacticowl.DualWield
 {
     [HarmonyPatch(typeof(JobDriver_Wait), nameof(JobDriver_Wait.CheckForAutoAttack))]
     class Patch_Jobdriver_Wait_CheckForAutoAttack
@@ -19,19 +19,20 @@ namespace SumGunFun.DualWield
             bool found = false;
             foreach (CodeInstruction instruction in instructions)
             {
-                if (!found && instruction.OperandIs(typeof(Pawn_StanceTracker).GetMethod("get_FullBodyBusy")))
+                if (!found && instruction.opcode == OpCodes.Callvirt && instruction.OperandIs(AccessTools.Property(typeof(Pawn_StanceTracker), nameof(Pawn_StanceTracker.FullBodyBusy)).GetGetMethod()))
                 {
                     found = true;
                     yield return new CodeInstruction(OpCodes.Call, typeof(Patch_Jobdriver_Wait_CheckForAutoAttack).GetMethod(nameof(FullBodyAndOffHandBusy)));
                 }
                 else yield return instruction;
             }
+            if (!found) Log.Error("[Tacticowl] Patch_Jobdriver_Wait_CheckForAutoAttack transpiler failed to find its target. Did RimWorld update?");
         }
         public static bool FullBodyAndOffHandBusy(Pawn_StanceTracker instance)
         {
-            if (instance.pawn.equipment != null && instance.pawn.equipment.TryGetOffHandEquipment(out ThingWithComps twc))
+            if (instance.pawn.equipment != null && instance.pawn.GetOffHander(out ThingWithComps twc))
             {
-                return instance.pawn.GetStanceeTrackerOffHand().FullBodyBusy && instance.FullBodyBusy;
+                return instance.pawn.GetOffHandStanceTracker().FullBodyBusy && instance.FullBodyBusy;
             }
             return instance.FullBodyBusy;
         }

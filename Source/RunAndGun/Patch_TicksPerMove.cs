@@ -1,9 +1,9 @@
 ﻿using System;
 using Verse;
 using HarmonyLib;
-using Settings = SumGunFun.ModSettings_SumGunFun;
+using Settings = Tacticowl.ModSettings_Tacticowl;
 
-namespace SumGunFun
+namespace Tacticowl
 {
     [HarmonyPatch(typeof(Pawn), nameof(Pawn.TicksPerMove))]
     static class Patch_TicksPerMove

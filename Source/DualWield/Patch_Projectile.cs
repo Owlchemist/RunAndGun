@@ -2,9 +2,9 @@
 using System;
 using UnityEngine;
 using Verse;
-using Settings = SumGunFun.ModSettings_SumGunFun;
+using Settings = Tacticowl.ModSettings_Tacticowl;
 
-namespace SumGunFun.DualWield
+namespace Tacticowl.DualWield
 {
     [HarmonyPatch(typeof(Projectile), nameof(Projectile.Launch))]
     [HarmonyPatch(new Type[] { typeof(Thing), typeof(Vector3), typeof(LocalTargetInfo), typeof(LocalTargetInfo), typeof(ProjectileHitFlags), typeof(bool), typeof(Thing), typeof(ThingDef) })]
@@ -26,7 +26,7 @@ namespace SumGunFun.DualWield
             else if (launcher.Rotation == Rot4.South) xOffset = 0.1f;
             else xOffset = -0.1f;
 
-            if (twc.IsOffHand()) origin += new Vector3(xOffset, 0, zOffset);
+            if (twc.IsOffHandedWeapon()) origin += new Vector3(xOffset, 0, zOffset);
         }
     }
 }

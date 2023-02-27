@@ -3,9 +3,9 @@ using RimWorld;
 using System.Reflection.Emit;
 using System.Collections.Generic;
 using Verse;
-using Settings = SumGunFun.ModSettings_SumGunFun;
+using Settings = Tacticowl.ModSettings_Tacticowl;
 
-namespace SumGunFun.DualWield
+namespace Tacticowl.DualWield
 {
     //Tick the stance tracker of the offfhand weapon
     [HarmonyPatch(typeof(Pawn), nameof(Pawn.Tick))]
@@ -21,18 +21,19 @@ namespace SumGunFun.DualWield
             foreach (CodeInstruction instruction in instructions)
             {
                 yield return instruction;
-                if (!found && instruction.opcode == OpCodes.Callvirt && instruction.OperandIs(AccessTools.Method(typeof(Pawn_RecordsTracker), nameof(Pawn_RecordsTracker.RecordsTick))))
+                if (!found && instruction.opcode == OpCodes.Callvirt && instruction.OperandIs(AccessTools.Method(typeof(Pawn_StanceTracker), nameof(Pawn_StanceTracker.StanceTrackerTick))))
                 {
                     found = true;
                     yield return new CodeInstruction(OpCodes.Ldarg_0);
                     yield return new CodeInstruction(OpCodes.Call, typeof(Patch_PawnTick).GetMethod(nameof(CheckDWStance)));
                 }
             }
+            if (!found) Log.Error("[Tacticowl] Patch_PawnTick transpiler failed to find its target. Did RimWorld update?");
         }
 
         public static void CheckDWStance(Pawn pawn)
         {
-            if (pawn.Spawned) pawn.GetStanceeTrackerOffHand().StanceTrackerTick();
+            if (pawn.Spawned && pawn.HasOffHand()) pawn.GetOffHandStanceTracker().StanceTrackerTick();
         }
     }
     //Also try start off hand weapons attack when trystartattack is called
@@ -52,7 +53,7 @@ namespace SumGunFun.DualWield
             }
         }
     }
-    //If main weapon has shorter range than off hand weapon, use offhand weapon instead. 
+    //If main weapon has shorter range than off hand weapon, use offHand weapon instead. 
     [HarmonyPatch(typeof(Pawn), nameof(Pawn.CurrentEffectiveVerb), MethodType.Getter)]
     class Patch_Pawn_CurrentEffectiveVerb
     {
@@ -64,7 +65,7 @@ namespace SumGunFun.DualWield
         {
             if (__instance.MannedThing() == null &&
                 __instance.equipment != null &&
-                __instance.equipment.TryGetOffHandEquipment(out ThingWithComps offHandEquip) &&
+                __instance.GetOffHander(out ThingWithComps offHandEquip) &&
                 !offHandEquip.def.IsMeleeWeapon &&
                 offHandEquip.TryGetComp<CompEquippable>() is CompEquippable compEquip)
             {

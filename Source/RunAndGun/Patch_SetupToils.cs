@@ -3,9 +3,9 @@ using HarmonyLib;
 using Verse;
 using Verse.AI;
 using RimWorld;
-using Settings = SumGunFun.ModSettings_SumGunFun;
+using Settings = Tacticowl.ModSettings_Tacticowl;
 
-namespace SumGunFun
+namespace Tacticowl
 {
 	[HarmonyPatch(typeof(JobDriver), nameof(JobDriver.SetupToils))]
 	static class Patch_SetupToils

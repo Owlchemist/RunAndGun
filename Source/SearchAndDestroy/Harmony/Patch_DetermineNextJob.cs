@@ -2,7 +2,7 @@
 using Verse;
 using Verse.AI;
 
-namespace SumGunFun
+namespace Tacticowl
 {
 	[HarmonyPatch(typeof(Pawn_JobTracker), nameof(Pawn_JobTracker.DetermineNextJob))]
 	static class Patch_DetermineNextJob

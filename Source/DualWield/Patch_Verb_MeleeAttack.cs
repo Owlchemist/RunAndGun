@@ -3,9 +3,9 @@ using RimWorld;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 using Verse;
-using Settings = SumGunFun.ModSettings_SumGunFun;
+using Settings = Tacticowl.ModSettings_Tacticowl;
 
-namespace SumGunFun.DualWield
+namespace Tacticowl.DualWield
 {
     [HarmonyPatch(typeof(Verb_MeleeAttack), nameof(Verb_MeleeAttack.TryCastShot))]
     class Patch_Verb_MeleeAttack_TryCastShot
@@ -19,7 +19,7 @@ namespace SumGunFun.DualWield
             bool found = false;
             foreach (CodeInstruction instruction in instructions)
             {
-                if (!found && instruction.OperandIs(typeof(Pawn_StanceTracker).GetMethod("get_FullBodyBusy")))
+                if (!found && instruction.opcode == OpCodes.Callvirt && instruction.OperandIs(AccessTools.Property(typeof(Pawn_StanceTracker), nameof(Pawn_StanceTracker.FullBodyBusy)).GetGetMethod()))
                 {
                     found = true;
                     yield return new CodeInstruction(OpCodes.Ldarg_0);
@@ -30,12 +30,13 @@ namespace SumGunFun.DualWield
                     yield return instruction;
                 }
             }
+            if (!found) Log.Error("[Tacticowl] Patch_Verb_MeleeAttack_TryCastShot transpiler failed to find its target. Did RimWorld update?");
         }
         public static bool CurrentHandBusy(Pawn_StanceTracker instance, Verb verb)
         {
             Pawn pawn = instance.pawn;
-            if (verb.EquipmentSource == null || !verb.EquipmentSource.IsOffHand()) return pawn.stances.FullBodyBusy;
-            else return !verb.Available() || pawn.GetStancesOffHand().StanceBusy;
+            if (verb.EquipmentSource == null || !verb.EquipmentSource.IsOffHandedWeapon()) return pawn.stances.FullBodyBusy;
+            else return !verb.Available() || pawn.GetOffHandStance().StanceBusy;
         }
     }
 }

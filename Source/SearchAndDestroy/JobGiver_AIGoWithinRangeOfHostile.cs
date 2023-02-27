@@ -2,7 +2,7 @@
 using Verse;
 using Verse.AI;
 
-namespace SumGunFun
+namespace Tacticowl
 {
     class JobGiver_GoWithinRangeOfHostile : JobGiver_AIGotoNearestHostile
 	{

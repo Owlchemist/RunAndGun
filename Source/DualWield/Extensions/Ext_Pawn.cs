@@ -1,122 +1,85 @@
 ﻿using RimWorld;
 using System.Collections.Generic;
 using Verse;
+using Settings = Tacticowl.ModSettings_Tacticowl;
 
-namespace SumGunFun.DualWield
+namespace Tacticowl.DualWield
 {
     public static class Ext_Pawn
     {
-        public static Stance GetStancesOffHand(this Pawn instance)
+        public static void TryStartOffHandAttack(this Pawn pawn, LocalTargetInfo targ, ref bool __result)
         {
-            return GetStanceeTrackerOffHand(instance).curStance;
-        }
-        public static Pawn_StanceTracker GetStanceeTrackerOffHand(this Pawn instance)
-        {
-            if (!RNDStorage._instance.stancesOffhand.TryGetValue(instance, out Pawn_StanceTracker pawn_StanceTracker))
-            {
-                pawn_StanceTracker = new Pawn_StanceTracker(instance);
-                RNDStorage._instance.stancesOffhand.Add(instance, pawn_StanceTracker);
-            }
-            return pawn_StanceTracker;
-        }
-        public static void SetStancesOffHand(this Pawn instance, Stance newStance)
-        {
-            Pawn_StanceTracker stanceTracker;
-            if (!RNDStorage._instance.stancesOffhand.TryGetValue(instance, out stanceTracker))
-            {
-                stanceTracker = new Pawn_StanceTracker(instance);
-                RNDStorage._instance.stancesOffhand.Add(instance, stanceTracker);
-            }
-            stanceTracker.SetStance(newStance);
-        }
-        public static void TryStartOffHandAttack(this Pawn __instance, LocalTargetInfo targ, ref bool __result)
-        {
-            if (__instance.equipment == null || !__instance.equipment.TryGetOffHandEquipment(out ThingWithComps offHandEquip))
+            if (pawn.equipment == null || !pawn.GetOffHander(out ThingWithComps offHandEquip))
             {
                 return;
             }
-            var offhandStance = __instance.GetStancesOffHand();
-            if (offhandStance is Stance_Warmup_DW || offhandStance is Stance_Cooldown)
+            var offHandStance = pawn.GetOffHandStance();
+            if (offHandStance is Stance_Warmup_DW || offHandStance is Stance_Cooldown || 
+                pawn.story != null && pawn.story.DisabledWorkTagsBackstoryAndTraits.HasFlag(WorkTags.Violent))
             {
                 return;
             }
-            if (__instance.story != null && __instance.story.DisabledWorkTagsBackstoryAndTraits.HasFlag(WorkTags.Violent))
+            //Support for JecsTools
+            //TODO: look into making making this XML-exposed via mod extensions?
+            if (Settings.usingJecsTools && pawn.CurJobDef != null && 
+                (pawn.CurJobDef.driverClass == ResourceBank.CastAbilitySelf.driverClass || pawn.CurJobDef.driverClass == ResourceBank.CastAbilityVerb.driverClass))
             {
                 return;
             }
-            if (__instance.jobs.curDriver.GetType().Name.Contains("Ability"))//Compatbility for Jecstools' abilities.
+            if (pawn.TryGetOffHandAttackVerb(targ.Thing, out Verb verb, true))
             {
-                return;
-            }
-            bool allowManualCastWeapons = !__instance.IsColonist;
-            Verb verb = __instance.TryGetOffhandAttackVerb(targ.Thing, true);
-            
-            if (verb != null)
-            {
-                bool success = verb.OffhandTryStartCastOn(targ);
-                __result = __result || (verb != null && success);
+                if (__result) return;
+                __result = verb.OffHandTryStartCastOn(targ);
             }
         }
-        public static Verb TryGetOffhandAttackVerb(this Pawn instance, Thing target, bool allowManualCastWeapons = false)
+        static bool TryGetOffHandAttackVerb(this Pawn instance, Thing target, out Verb verb, bool allowManualCastWeapons = false)
         {
-            Pawn_EquipmentTracker equipment = instance.equipment;
-            ThingWithComps offHandEquip = null;
-            CompEquippable compEquippable = null;
-            if (equipment != null && equipment.TryGetOffHandEquipment(out ThingWithComps result) && result != equipment.Primary)
+            verb = null;
+            if (instance.GetOffHander(out ThingWithComps offHandEquip))
             {
-                offHandEquip = result; //TODO: replace this temp code.
-                compEquippable = offHandEquip.TryGetComp<CompEquippable>();
+                CompEquippable compEquippable = offHandEquip.GetComp<CompEquippable>();
+                
+                if (compEquippable != null && compEquippable.PrimaryVerb.Available() && 
+                (!compEquippable.PrimaryVerb.verbProps.onlyManualCast || instance.CurJobDef != JobDefOf.Wait_Combat || allowManualCastWeapons))
+                {
+                    verb = compEquippable.PrimaryVerb;
+                }
             }
-            if (compEquippable != null && compEquippable.PrimaryVerb.Available() && (!compEquippable.PrimaryVerb.verbProps.onlyManualCast || (instance.CurJob != null && instance.CurJob.def != JobDefOf.Wait_Combat) || allowManualCastWeapons))
-            {
-                return compEquippable.PrimaryVerb;
-            }
-            else
-            {
-                return instance.TryGetMeleeVerbOffHand(target);
-            }
+            else instance.TryGetMeleeVerbOffHand(target, out verb);
+            return verb != null;
         }
         public static bool HasMissingArmOrHand(this Pawn instance)
         {
-            bool hasMissingHand = false;
-            foreach (Hediff_MissingPart missingPart in instance.health.hediffSet.GetMissingPartsCommonAncestors())
+            var list = instance.health.hediffSet.GetMissingPartsCommonAncestors();
+            for (int i = list.Count; i-- > 0;)
             {
-                if (missingPart.Part.def == BodyPartDefOf.Hand || missingPart.Part.def == BodyPartDefOf.Arm)
+                var partDef = list[i].Part.def;
+                if (partDef == BodyPartDefOf.Hand || partDef == BodyPartDefOf.Arm) return true;
+            }
+            
+            return false;
+        }
+        public static bool TryGetMeleeVerbOffHand(this Pawn instance, Thing target, out Verb verb)
+        {
+            verb = null;
+            if (instance.GetOffHander(out ThingWithComps offHandEquip))
+            {              
+                List<Verb> allVerbs = offHandEquip.GetComp<CompEquippable>()?.AllVerbs;
+                if (allVerbs != null)
                 {
-                    hasMissingHand = true;
+                    List<VerbEntry> usableVerbs = new List<VerbEntry>();
+                    for (int k = allVerbs.Count; k-- > 0;)
+                    {
+                        Verb v = allVerbs[k];
+                        if (v.IsStillUsableBy(instance)) usableVerbs.Add(new VerbEntry(v, instance));
+                    }
+                    if (usableVerbs.TryRandomElementByWeight(ve => ve.GetSelectionWeight(target), out VerbEntry result))
+                    {
+                        verb = result.verb;
+                    }
                 }
             }
-            return hasMissingHand;
+            return verb != null;
         }
-        public static Verb TryGetMeleeVerbOffHand(this Pawn instance, Thing target)
-        {
-
-            List<VerbEntry> usableVerbs = new List<VerbEntry>();
-            if (instance.equipment != null && instance.equipment.TryGetOffHandEquipment(out ThingWithComps offHandEquip))
-            {              
-                CompEquippable comp = offHandEquip.GetComp<CompEquippable>();
-                //if (comp.AllVerbs.First((Verb verb) => verb.bu
-                if (comp != null)
-                {
-                    List<Verb> allVerbs = comp.AllVerbs;
-                    if (allVerbs != null)
-                    {
-                        for (int k = 0; k < allVerbs.Count; k++)
-                        {
-                            if (allVerbs[k].IsStillUsableBy(instance))
-                            {
-                                usableVerbs.Add(new VerbEntry(allVerbs[k], instance));
-                            }
-                        }
-                    }
-                }           
-            }
-            if (usableVerbs.TryRandomElementByWeight((VerbEntry ve) => ve.GetSelectionWeight(target), out VerbEntry result))
-            {
-                return result.verb;
-            }
-            return null;       
-        }
-
     }
 }

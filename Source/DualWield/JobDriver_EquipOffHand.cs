@@ -2,8 +2,9 @@
 using Verse;
 using Verse.AI;
 using Verse.Sound;
+using Tacticowl;
 
-namespace SumGunFun.DualWield
+namespace Tacticowl.DualWield
 {
     class JobDriver_EquipOffHand : JobDriver
     {
@@ -24,18 +25,18 @@ namespace SumGunFun.DualWield
                 initAction = delegate
                 {
                     ThingWithComps thingWithComps = (ThingWithComps)this.job.targetA.Thing;
-                    ThingWithComps thingWithComps2;
+                    ThingWithComps offHandWeapon;
                     if (thingWithComps.def.stackLimit > 1 && thingWithComps.stackCount > 1)
                     {
-                        thingWithComps2 = (ThingWithComps)thingWithComps.SplitOff(1);
+                        offHandWeapon = (ThingWithComps)thingWithComps.SplitOff(1);
                     }
                     else
                     {
-                        thingWithComps2 = thingWithComps;
-                        thingWithComps2.DeSpawn(DestroyMode.Vanish);
+                        offHandWeapon = thingWithComps;
+                        offHandWeapon.DeSpawn(DestroyMode.Vanish);
                     }
-                    this.pawn.equipment.MakeRoomForOffHand(thingWithComps2);
-                    this.pawn.equipment.AddOffHandEquipment(thingWithComps2);
+                    pawn.MakeRoomForOffHand(offHandWeapon);
+                    pawn.SetOffHander(offHandWeapon);
                     if (thingWithComps.def.soundInteract != null)
                     {
                         thingWithComps.def.soundInteract.PlayOneShot(new TargetInfo(this.pawn.Position, this.pawn.Map, false));

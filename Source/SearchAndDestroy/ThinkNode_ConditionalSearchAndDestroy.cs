@@ -1,7 +1,7 @@
 ﻿using Verse;
 using Verse.AI;
 
-namespace SumGunFun
+namespace Tacticowl
 {
     public class ThinkNode_ConditionalSearchAndDestroy : ThinkNode_Conditional
     {

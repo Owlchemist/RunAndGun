@@ -1,79 +1,155 @@
+using RimWorld;
 using Verse;
-using System.Linq;
 using System.Collections.Generic;
-using Settings = SumGunFun.ModSettings_SumGunFun;
+using Settings = Tacticowl.ModSettings_Tacticowl;
 
-namespace SumGunFun
+namespace Tacticowl
 {
 	static class StorageUtility
 	{
 		public static bool RunsAndGuns(this Pawn pawn)
 		{
-			return RNDStorage._instance.RnG.Contains(pawn);
+			return Storage._instance.RnG.Contains(pawn);
 		}
 		public static void SetRunsAndGuns(this Pawn pawn, bool set)
 		{
-			if (set) RNDStorage._instance.RnG.Add(pawn);
-			else RNDStorage._instance.RnG.Remove(pawn);
+			if (set) Storage._instance.RnG.Add(pawn);
+			else Storage._instance.RnG.Remove(pawn);
 		}
 		public static bool SearchesAndDestroys(this Pawn pawn)
 		{
-			return RNDStorage._instance.SnD.Contains(pawn);
+			return Storage._instance.SnD.Contains(pawn);
 		}
 		public static void SetSearchAndDestroy(this Pawn pawn, bool set)
 		{
-			if (set) RNDStorage._instance.SnD.Add(pawn);
-			else RNDStorage._instance.SnD.Remove(pawn);
+			if (set) Storage._instance.SnD.Add(pawn);
+			else Storage._instance.SnD.Remove(pawn);
 		}
-		public static bool IsOffHand(this ThingWithComps thing)
+		public static bool IsOffHandedWeapon(this ThingWithComps thing)
 		{
-			return RNDStorage._instance.offhands.Contains(thing);
+			return Storage._instance.offHands.Contains(thing);
 		}
-		public static void SetOffhand(this Thing thing, bool set)
+		public static void SetWeaponAsOffHanded(this Thing thing, bool set)
 		{
-			if (set) RNDStorage._instance.offhands.Add(thing);
-			else RNDStorage._instance.offhands.Remove(thing);
+			if (set) Storage._instance.offHands.Add(thing);
+			else Storage._instance.offHands.Remove(thing);
 		}
 		public static bool IsTwoHanded(this Def def)
 		{
 			return Settings.twoHandersCache.Contains(def.shortHash);
 		}
-
 		public static bool CanBeOffHand(this Def def)
 		{
 			return Settings.offHandersCache.Contains(def.shortHash);
 		}
+		public static bool GetTacticowlStorage(this Pawn pawn, out PawnStorage pawnStorage, bool setupIfNeeded = false)
+		{
+			if (!Storage._instance.store.TryGetValue(pawn, out pawnStorage))
+			{
+				if (!setupIfNeeded) return false;
+				pawnStorage = new PawnStorage();
+				Storage._instance.store.Add(pawn, pawnStorage);
+			}
+			return true;
+		}
+		//TODO: consider moving this to a hashset compiled on save load
+		public static bool HasOffHand(this Pawn pawn)
+		{
+			return pawn.GetTacticowlStorage(out PawnStorage pawnStorage) ? pawnStorage.offHandWeapon != null : false;
+		}
+		public static bool GetOffHander(this Pawn pawn, out ThingWithComps thing)
+		{
+			thing = pawn.GetTacticowlStorage(out PawnStorage pawnStorage) ? pawnStorage.offHandWeapon : null;
+			return thing != null;
+		}
+		public static void SetOffHander(this Pawn pawn, ThingWithComps thing)
+		{
+			pawn.GetTacticowlStorage(out PawnStorage pawnStorage, true); 
+			pawnStorage.offHandWeapon = thing;
+
+			thing.SetWeaponAsOffHanded(true);
+			pawn.equipment.equipment.TryAdd(thing, true);
+
+            LessonAutoActivator.TeachOpportunity(ResourceBank.ConceptDefOf.DW_Penalties, OpportunityType.GoodToKnow);
+            LessonAutoActivator.TeachOpportunity(ResourceBank.ConceptDefOf.DW_Settings, OpportunityType.GoodToKnow);
+		}
+		public static Stance GetOffHandStance(this Pawn pawn)
+        {
+            return GetOffHandStanceTracker(pawn).curStance;
+        }
+        public static Pawn_StanceTracker GetOffHandStanceTracker(this Pawn pawn)
+        {
+			pawn.GetTacticowlStorage(out PawnStorage pawnStorage, true);
+			Pawn_StanceTracker pawn_StanceTracker;
+            if (pawnStorage.stances == null)
+            {
+                pawn_StanceTracker = new Pawn_StanceTracker(pawn);
+                pawnStorage.stances = pawn_StanceTracker;
+            }
+			else pawn_StanceTracker = pawnStorage.stances;
+            return pawn_StanceTracker;
+        }
 	}
-	class RNDStorage : GameComponent
+	class Storage : GameComponent
 	{
 		public HashSet<Pawn> RnG = new HashSet<Pawn>();
 		public HashSet<Pawn> SnD = new HashSet<Pawn>();
-		public HashSet<Thing> offhands = new HashSet<Thing>();
-		public Dictionary<Pawn, Pawn_StanceTracker> stancesOffhand = new Dictionary<Pawn, Pawn_StanceTracker>();
-		public static RNDStorage _instance;
-		public RNDStorage(Game game)
+		public HashSet<Thing> offHands = new HashSet<Thing>(); //Cache of ThingsWithComps that are currently held as an offHand
+		public Dictionary<Pawn, PawnStorage> store = new Dictionary<Pawn, PawnStorage>();
+		public static Storage _instance;
+		public Storage(Game game)
 		{ 
 			_instance = this;
 		}
 
+		static List<Pawn> keysWorkingList = new List<Pawn>();
+		static List<PawnStorage> valuesWorkingList = new List<PawnStorage>();
+		
 		public override void ExposeData()
-		{
-			base.ExposeData();
+		   {
+            base.ExposeData();
 			Scribe_Collections.Look(ref RnG, "RnG", LookMode.Reference);
 			Scribe_Collections.Look(ref SnD, "SnD", LookMode.Reference);
-			Scribe_Collections.Look(ref offhands, "offhands", LookMode.Reference);
-			Scribe_Collections.Look(ref stancesOffhand, "stancesOffhand", LookMode.Reference, LookMode.Reference);
+			Scribe_Collections.Look(ref offHands, "offHands", LookMode.Reference);
+			Scribe_Collections.Look(ref store, "store", LookMode.Reference, LookMode.Deep, ref keysWorkingList, ref valuesWorkingList);
 
 			if (Scribe.mode == LoadSaveMode.PostLoadInit)
 			{
-				foreach (var pawn in RnG.ToList())
+				if (RnG == null) RnG = new HashSet<Pawn>();
+				if (SnD == null) SnD = new HashSet<Pawn>();
+				if (offHands == null) offHands = new HashSet<Thing>();
+				if (store == null) store = new Dictionary<Pawn, PawnStorage>();
+
+				//Remove invalid keys if there
+				RnG.Remove(null);
+				SnD.Remove(null);
+				offHands.Remove(null);
+			}
+		}
+	}
+	public class PawnStorage : IExposable
+	{
+		public ThingWithComps offHandWeapon;
+		public Pawn_StanceTracker stances;
+	
+		public PawnStorage() {}
+
+		public void ExposeData()
+		{
+			//No need to save pointless entries
+			Scribe_References.Look(ref offHandWeapon, "offHandWeapon");
+
+			if (stances != null)
+			{
+				object[] array = new object[]
 				{
-					if (pawn == null) RnG.Remove(pawn);
-				}
-				foreach (var pawn in SnD.ToList())
+					stances.pawn
+				};
+				Scribe_Deep.Look<Pawn_StanceTracker>(ref stances, "stances", new object[]
 				{
-					if (pawn == null) SnD.Remove(pawn);
-				}
+					false,
+					array
+				});
 			}
 		}
 	}

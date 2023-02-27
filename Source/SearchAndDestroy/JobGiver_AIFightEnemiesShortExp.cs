@@ -2,7 +2,7 @@
 using Verse;
 using Verse.AI;
 
-namespace SumGunFun
+namespace Tacticowl
 {
     class JobGiver_AIFightEnemiesShortExp : JobGiver_AIFightEnemies
     {

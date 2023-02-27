@@ -2,7 +2,7 @@
 using UnityEngine;
 using Verse;
 
-namespace SumGunFun
+namespace Tacticowl
 {
     public class Command_DualWield : Command_VerbTarget
     {

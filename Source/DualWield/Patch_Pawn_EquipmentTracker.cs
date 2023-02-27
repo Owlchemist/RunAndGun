@@ -3,11 +3,11 @@ using RimWorld;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 using Verse;
-using Settings = SumGunFun.ModSettings_SumGunFun;
+using Settings = Tacticowl.ModSettings_Tacticowl;
 
-namespace SumGunFun.DualWield
+namespace Tacticowl.DualWield
 {
-    //This patch prevent an error thrown when a offhand weapon is equipped and the primary weapon is switched. 
+    //This patch prevent an error thrown when a offHand weapon is equipped and the primary weapon is switched. 
     [HarmonyPatch(typeof(Pawn_EquipmentTracker), nameof(Pawn_EquipmentTracker.AddEquipment))]
     class Patch_Pawn_EquipmentTracker_AddEquipment
     {
@@ -20,32 +20,30 @@ namespace SumGunFun.DualWield
             bool found = false;
             foreach (CodeInstruction instruction in instructions)
             {
-                if (!found && instruction.OperandIs(typeof(Pawn_EquipmentTracker).GetMethod("get_Primary")))
+                if (!found && instruction.opcode == OpCodes.Call && instruction.OperandIs(AccessTools.Property(typeof(Pawn_EquipmentTracker), nameof(Pawn_EquipmentTracker.Primary)).GetGetMethod()))
                 {
                     found = true;
                     yield return new CodeInstruction(OpCodes.Call, typeof(Patch_Pawn_EquipmentTracker_AddEquipment).GetMethod(nameof(PrimaryNoOffHand)));
                 }
                 else yield return instruction;
             }
+            if (!found) Log.Error("[Tacticowl] Patch_Pawn_EquipmentTracker_AddEquipment transpiler failed to find its target. Did RimWorld update?");
         }
-        //Make sure offhand weapons are never stored first in the list. 
-        static void Postfix(Pawn_EquipmentTracker __instance, ThingWithComps newEq, ref ThingOwner<ThingWithComps> ___equipment)
+        //Make sure offHand weapons are never stored first in the list. 
+        static void Postfix(Pawn_EquipmentTracker __instance, ThingOwner<ThingWithComps> ___equipment)
         {
             ThingWithComps primary = __instance.Primary;
-            if (primary != null && primary.IsOffHand())
+            if (___equipment != null && primary != null && primary.IsOffHandedWeapon())
             {
-                if (___equipment != null)
-                {
-                    ___equipment.Remove(primary);
-                    __instance.AddOffHandEquipment(primary);
-                }
+                ___equipment.Remove(primary);
+                __instance.pawn.SetOffHander(primary);   
             }
         }
         public static ThingWithComps PrimaryNoOffHand(Pawn_EquipmentTracker instance)
         {
             ThingWithComps result = null;
-            //When there's no offhand weapon equipped, use vanilla behaviour and throw the error when needed. Otherwise, make sure the error is never thrown. 
-            if (!instance.TryGetOffHandEquipment(out ThingWithComps r))
+            //When there's no offHand weapon equipped, use vanilla behaviour and throw the error when needed. Otherwise, make sure the error is never thrown. 
+            if (!instance.pawn.GetOffHander(out ThingWithComps r))
             {
                 return instance.Primary;
             }
@@ -61,7 +59,7 @@ namespace SumGunFun.DualWield
         }
         static bool Prefix(Pawn_EquipmentTracker __instance, ThingWithComps eq)
         {
-            bool offHandEquipped = __instance.TryGetOffHandEquipment(out ThingWithComps offHand);
+            bool offHandEquipped = __instance.pawn.GetOffHander(out ThingWithComps offHand);
             if (offHandEquipped && offHand == __instance.Primary && !eq.def.IsTwoHanded())
             {
                 return false;

@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using Verse;
 using UnityEngine;
-using static SumGunFun.ModSettings_SumGunFun;
+using static Tacticowl.ModSettings_Tacticowl;
 
-namespace SumGunFun
+namespace Tacticowl
 {
 	[StaticConstructorOnStartup]
 	public static class Setup
@@ -14,7 +14,7 @@ namespace SumGunFun
 	
 		static Setup()
 		{
-			var harmony = new HarmonyLib.Harmony("SumGunFun");
+			var harmony = new HarmonyLib.Harmony("Tacticowl");
 			harmony.PatchAll();
 
 			SetupRnG();
@@ -34,7 +34,6 @@ namespace SumGunFun
 				if (def.equipmentType == EquipmentType.Primary && !def.weaponTags.NullOrEmpty<string>() && !def.destroyOnDrop)
 				{
 					workingList.Add(def);
-					if (!def.IsWeaponUsingProjectiles) continue;
 					#region Heavy weapons
 					//Check weight (3.4 usually)
 					bool setting = def.BaseMass > weightLimitFilterDefault;
@@ -57,8 +56,17 @@ namespace SumGunFun
 			workingList.SortBy(x => x.label);
 			allWeapons = workingList.ToArray();
 		}
-		static void SetupDW()
+		public static void SetupDW(bool processInversions = false)
 		{
+			HashSet<ushort> modifiedOffHandersCache;
+			HashSet<ushort> modifiedTwoHandersCache;
+			if (processInversions)
+			{
+				modifiedOffHandersCache = new HashSet<ushort>(offHandersCache);
+				modifiedTwoHandersCache = new HashSet<ushort>(twoHandersCache);
+			}
+			else modifiedOffHandersCache = modifiedTwoHandersCache = null;
+
 			offHandersCache = new HashSet<ushort>();
 			twoHandersCache = new HashSet<ushort>();
 			if (offHanders == null) offHanders = new List<string>();
@@ -70,14 +78,47 @@ namespace SumGunFun
 			for (int i = allWeapons.Length; i-- > 0;)
 			{
 				var def = allWeapons[i];
+				var shortHash = def.shortHash;
+				
+				//Process extensions
 				var modExtensions = def.modExtensions;
 				if (modExtensions != null)
 				{
 					for (int j = modExtensions.Count; j-- > 0;)
 					{
 						var ext = modExtensions[j];
-						if (ext is TwoHander || ext is WeaponForbidden) twoHandersCache.Add(def.shortHash);
-						else if (ext is OffHander) offHandersCache.Add(def.shortHash);
+						if (ext is TwoHander || ext is WeaponForbidden) twoHandersCache.Add(shortHash);
+						else if (ext is OffHander) offHandersCache.Add(shortHash);
+					}
+				}
+				
+				//Sync with run n gun light weapons
+				if (!heavyWeaponsCache.Contains(shortHash)) offHandersCache.Add(shortHash);
+				else twoHandersCache.Add(shortHash);
+				
+				//Special handling for bows. TODO: make this an xpath patch
+				if (twoHandersCache.Contains(shortHash)) offHandersCache.Remove(shortHash);
+				
+				//Process inversions
+				if (processInversions)
+				{
+					if (modifiedOffHandersCache.Contains(shortHash) != offHandersCache.Contains(shortHash)) offHanders.Add(def.defName);
+					if (modifiedTwoHandersCache.Contains(shortHash) != twoHandersCache.Contains(shortHash)) twoHanders.Add(def.defName);
+					offHandersCache = modifiedOffHandersCache;
+					twoHandersCache = modifiedTwoHandersCache;
+					return;
+				}
+				else
+				{
+					if (offHanders.Contains(def.defName))
+					{
+						if (offHandersCache.Contains(shortHash)) offHandersCache.Remove(shortHash);
+						else offHandersCache.Add(shortHash);
+					}
+					if (twoHanders.Contains(def.defName))
+					{
+						if (twoHandersCache.Contains(shortHash)) twoHandersCache.Remove(shortHash);
+						else twoHandersCache.Add(shortHash);
 					}
 				}
 			}
@@ -89,23 +130,31 @@ namespace SumGunFun
 			forbiddenWeapons = new List<string>();
 
 			//Check for abnormalities
-			foreach (var weapon in allWeapons)
+			for (int i = allWeapons.Length; i-- > 0;)
 			{
-				if (weapon.BaseMass > weightLimitFilterDefault && !heavyWeaponsCache.Contains(weapon.shortHash)) heavyWeapons.Add(weapon.defName);
-				else if (weapon.BaseMass <= weightLimitFilterDefault && heavyWeaponsCache.Contains(weapon.shortHash)) heavyWeapons.Add(weapon.defName);
+				var weapon = allWeapons[i];
+				if (weapon.BaseMass > weightLimitFilterDefault)
+				{
+					if (!heavyWeaponsCache.Contains(weapon.shortHash)) heavyWeapons.Add(weapon.defName);
+				}
+				else if (heavyWeaponsCache.Contains(weapon.shortHash)) heavyWeapons.Add(weapon.defName);
+				
 
 				bool hasComp = weapon.HasModExtension<WeaponForbidden>();
-				if (hasComp && !forbiddenWeaponsCache.Contains(weapon.shortHash)) forbiddenWeapons.Add(weapon.defName);
-				else if (!hasComp && forbiddenWeaponsCache.Contains(weapon.shortHash)) forbiddenWeapons.Add(weapon.defName);
+				if (hasComp)
+				{
+					if (!forbiddenWeaponsCache.Contains(weapon.shortHash)) forbiddenWeapons.Add(weapon.defName);
+				}
+				else if (forbiddenWeaponsCache.Contains(weapon.shortHash)) forbiddenWeapons.Add(weapon.defName);
 			}
 		}
 	}
 	
-	public class Mod_SumGunFun : Mod
+	public class Mod_Tacticowl : Mod
 	{
-		public Mod_SumGunFun(ModContentPack content) : base(content)
+		public Mod_Tacticowl(ModContentPack content) : base(content)
 		{
-			base.GetSettings<ModSettings_SumGunFun>();
+			base.GetSettings<ModSettings_Tacticowl>();
 		}
 		public override void DoSettingsWindowContents(Rect inRect)
 		{
@@ -220,7 +269,7 @@ namespace SumGunFun
 				options.Begin(new Rect(inRect.x + 15, inRect.y + 55, inRect.width - 30, inRect.height - 30));
 				options.ColumnWidth = (options.listingRect.width - 30f) / 2f;
 				
-				options.Label("DW_Setting_NPCDualWieldChance_Title".Translate("0", "100", "40", NPCDualWieldChance.ToString()), -1f, "DW_Setting_NPCDualWieldChance_Description".Translate());
+				options.Label("DW_Setting_NPCDualWieldChance_Title".Translate("0", "100", "10", NPCDualWieldChance.ToString()), -1f, "DW_Setting_NPCDualWieldChance_Description".Translate());
 				NPCDualWieldChance = (int)options.Slider(NPCDualWieldChance, 0, 100);
 
 				options.Label("DW_Setting_StaticAccPMainHand_Title".Translate("0", "500", "10", Math.Round(staticAccPMainHand).ToString()), -1f, "DW_Setting_StaticAccPMainHand_Description".Translate());
@@ -254,7 +303,7 @@ namespace SumGunFun
 
 				//========Setup tabs=========
 				tabs = new List<TabRecord>();
-				tabs.Add(new TabRecord("DW_Tab_Offhands".Translate(), delegate { selectedTab = Tab.offHands; }, selectedTab == Tab.offHands));
+				tabs.Add(new TabRecord("DW_Tab_OffHands".Translate(), delegate { selectedTab = Tab.offHands; }, selectedTab == Tab.offHands));
 				tabs.Add(new TabRecord("DW_Tab_Twohanders".Translate(), delegate { selectedTab = Tab.twoHanders; }, selectedTab == Tab.twoHanders));
 				tabs.Add(new TabRecord("DW_Tab_CustomRotations".Translate(), delegate { selectedTab = Tab.customRotations; }, selectedTab == Tab.customRotations));
 				tabs.Add(new TabRecord("DW_Tab_Offsets".Translate(), delegate { selectedTab = Tab.offsets; }, selectedTab == Tab.offsets));
@@ -321,13 +370,14 @@ namespace SumGunFun
 		}
 		public override string SettingsCategory()
 		{
-			return "Sum Gun Fun";
+			return "Tacticowl";
 		}
 		public override void WriteSettings()
 		{            
 			try
 			{
 				Setup.CheckInvesions();
+				Setup.SetupDW(processInversions: true);
 			}
 			catch (System.Exception ex)
 			{
@@ -336,7 +386,7 @@ namespace SumGunFun
 			base.WriteSettings();
 		}   
 	}
-	public class ModSettings_SumGunFun : ModSettings
+	public class ModSettings_Tacticowl : ModSettings
 	{
 		public override void ExposeData()
 		{
@@ -351,8 +401,8 @@ namespace SumGunFun
 			Scribe_Collections.Look(ref heavyWeapons, "heavyWeapons", LookMode.Value);
 			Scribe_Collections.Look(ref forbiddenWeapons, "forbiddenWeapons", LookMode.Value);
 
-			Scribe_Values.Look(ref meleeMirrored, "meleeMirrored");
-			Scribe_Values.Look(ref rangedMirrored, "rangedMirrored");
+			Scribe_Values.Look(ref meleeMirrored, "meleeMirrored", true);
+			Scribe_Values.Look(ref rangedMirrored, "rangedMirrored", true);
 			Scribe_Values.Look(ref staticCooldownPOffHand, "staticCooldownPOffHand", 20f);
 			Scribe_Values.Look(ref staticCooldownPMainHand, "staticCooldownPMainHand", 10f);
 			Scribe_Values.Look(ref staticAccPOffHand, "staticAccPOffHand", 10f);
@@ -365,7 +415,7 @@ namespace SumGunFun
 			Scribe_Values.Look(ref rangedXOffset, "rangedXOffset", 0.1f);
 			Scribe_Values.Look(ref meleeZOffset, "meleeZOffset");
 			Scribe_Values.Look(ref rangedZOffset, "rangedZOffset");
-			Scribe_Values.Look(ref NPCDualWieldChance, "NPCDualWieldChance", 40);
+			Scribe_Values.Look(ref NPCDualWieldChance, "NPCDualWieldChance", 10);
 
 			Scribe_Values.Look(ref runAndGunEnabled, "runAndGunEnabled", true);
 			Scribe_Values.Look(ref searchAndDestroyEnabled, "searchAndDestroyEnabled", true);
@@ -373,7 +423,7 @@ namespace SumGunFun
 			
 			base.ExposeData();
 		}
-		public static bool enableForAI = true, enableForAnimals, runAndGunEnabled = true, searchAndDestroyEnabled = true, dualWieldEnabled = true;
+		public static bool enableForAI = true, enableForAnimals, runAndGunEnabled = true, searchAndDestroyEnabled = true, dualWieldEnabled = true, logging, usingJecsTools;
 		public static int enableForFleeChance = 50;
 		public static float accuracyModifier = 0.65f,
 			accuracyModifierPlayer = 0.65f,
@@ -400,8 +450,8 @@ namespace SumGunFun
 		#endregion
 	
 		#region dual wield
-		public static bool meleeMirrored,
-			rangedMirrored;
+		public static bool meleeMirrored = true,
+			rangedMirrored = true;
 
         public static float staticCooldownPOffHand = 20f,
 			staticCooldownPMainHand = 10f,
@@ -416,7 +466,7 @@ namespace SumGunFun
 			meleeZOffset,
 			rangedZOffset;
 
-        public static int NPCDualWieldChance = 40;
+        public static int NPCDualWieldChance = 10;
 		#endregion
 	}
 }

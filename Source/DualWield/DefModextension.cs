@@ -1,6 +1,6 @@
 ﻿using Verse;
 
-namespace SumGunFun
+namespace Tacticowl
 {
     public class OffHander : DefModExtension {}
     public class TwoHander : DefModExtension {}

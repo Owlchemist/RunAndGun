@@ -3,9 +3,9 @@ using Verse;
 using HarmonyLib;
 using RimWorld;
 using Verse.AI;
-using Settings = SumGunFun.ModSettings_SumGunFun;
+using Settings = Tacticowl.ModSettings_Tacticowl;
 
-namespace SumGunFun
+namespace Tacticowl
 {
     [HarmonyPatch(typeof(Pawn), nameof(Pawn.SpawnSetup))]
     static class Patch_SpawnSetup

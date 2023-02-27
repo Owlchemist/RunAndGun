@@ -3,10 +3,10 @@ using UnityEngine;
 using Verse.Sound;
 using RimWorld;
 using System.Collections.Generic;
-using static SumGunFun.ModSettings_SumGunFun;
-using static SumGunFun.Setup;
+using static Tacticowl.ModSettings_Tacticowl;
+using static Tacticowl.Setup;
  
-namespace SumGunFun
+namespace Tacticowl
 {
     public static class OptionsDrawUtility
 	{
@@ -22,7 +22,7 @@ namespace SumGunFun
 				var def = allWeapons[i];
 				if (def == null) continue;
 				if (selectedTab == Tab.heavyWeapons && def.BaseMass <= weightLimitFilter) continue;
-				else if (selectedTab == Tab.offHands && twoHandersCache.Contains(def.shortHash)) continue;
+				if (selectedTab == Tab.offHands && (def.BaseMass > weightLimitFilter || twoHandersCache.Contains(def.shortHash))) continue;
 
 				cellPosition += lineHeight;
 				++lineNumber;

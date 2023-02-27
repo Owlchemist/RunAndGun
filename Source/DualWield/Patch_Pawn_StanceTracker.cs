@@ -1,8 +1,8 @@
 ﻿using HarmonyLib;
 using Verse;
-using Settings = SumGunFun.ModSettings_SumGunFun;
+using Settings = Tacticowl.ModSettings_Tacticowl;
 
-namespace SumGunFun.DualWield
+namespace Tacticowl.DualWield
 {
 	[HarmonyPatch(typeof(Pawn_StanceTracker), nameof(Pawn_StanceTracker.FullBodyBusy), MethodType.Getter)]
 	class Patch_Pawn_StanceTracker_FullBodyBusy
@@ -11,14 +11,13 @@ namespace SumGunFun.DualWield
         {
             return Settings.dualWieldEnabled;
         }
-		static bool Postfix(bool __result, Pawn_StanceTracker __instance)
+		static bool Postfix(bool __result, Pawn_StanceTracker __instance, Pawn ___pawn)
 		{
-			if (__result) return __result;
+			if (__result || ___pawn.RaceProps.intelligence == Intelligence.Animal || !___pawn.HasOffHand()) return __result;
 			else
 			{
-				Pawn pawn = __instance.pawn;
-				var stancesOffHand = pawn.GetStancesOffHand();
-				if (stancesOffHand is Stance_Cooldown && !pawn.RunsAndGuns()) return stancesOffHand.StanceBusy;
+				var stancesOffHand = ___pawn.GetOffHandStance();
+				if (stancesOffHand is Stance_Cooldown && !___pawn.RunsAndGuns()) return stancesOffHand.StanceBusy;
 				else return false;
 			}
 		}

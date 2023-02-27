@@ -4,9 +4,9 @@ using HarmonyLib;
 using Verse;
 using UnityEngine;
 using RimWorld;
-using Settings = SumGunFun.ModSettings_SumGunFun;
+using Settings = Tacticowl.ModSettings_Tacticowl;
 
-namespace SumGunFun
+namespace Tacticowl
 {
     [HarmonyPatch(typeof(Pawn), nameof(Pawn.GetGizmos))]
     public class Patch_PawnGetGizmos
