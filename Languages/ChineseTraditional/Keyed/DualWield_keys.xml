@@ -20,10 +20,10 @@
   <DW_Setting_DynamicAccP_Description>當雙持武器時，單位的射擊/格鬥等級低於設定時，每少一級就會有額外的命中率懲罰。</DW_Setting_DynamicAccP_Description>
 
 
-  <DW_Setting_MeleeAngle_Title>近戰武器－額外角度 （默認：{2}% 當前：{3}%）</DW_Setting_MeleeAngle_Title>
+  <DW_Setting_MeleeAngle_Title>近戰武器－角度調整 （默認：{2}% 當前：{3}%）</DW_Setting_MeleeAngle_Title>
   <DW_Setting_MeleeAngle_Description>單位雙持時，調整近戰武器的貼圖角度</DW_Setting_MeleeAngle_Description>
 
-  <DW_Setting_RangedAngle_Title>遠程武器－額外角度 （默認：{2}% 當前：{3}%）</DW_Setting_RangedAngle_Title>
+  <DW_Setting_RangedAngle_Title>遠程武器－角度調整 （默認：{2}% 當前：{3}%）</DW_Setting_RangedAngle_Title>
   <DW_Setting_RangedAngle_Description>單位雙持時，調整遠程武器的貼圖角度</DW_Setting_RangedAngle_Description>
 
   <DW_Setting_MeleeXOffset_Title>近戰武器－水平調整（默認：{2}% 當前：{3}%）</DW_Setting_MeleeXOffset_Title>
