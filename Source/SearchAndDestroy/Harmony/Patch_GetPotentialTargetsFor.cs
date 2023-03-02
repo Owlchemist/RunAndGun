@@ -13,13 +13,10 @@ namespace Tacticowl
         {    
             if (th is not Pawn searchPawn || !searchPawn.SearchesAndDestroys()) return;
 
-            for (int i= __result.Count - 1; i > -1; i--)
+            for (int i = __result.Count; i-- > 0;)
             {
                 var target = __result[i];
-                if (target is Pawn targetPawn)
-                {
-                    if (!targetPawn.NonHumanlikeOrWildMan() || targetPawn.IsAttacking()) continue;
-                }
+                if (target is Pawn targetPawn) if (!targetPawn.NonHumanlikeOrWildMan() || targetPawn.IsAttacking()) continue;
                 
                 __result.Remove(target);
             }

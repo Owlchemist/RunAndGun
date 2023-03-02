@@ -19,6 +19,7 @@ namespace Tacticowl
 
 			SetupRnG();
 			SetupDW();
+			SetupDWCustomRotations();
 		}
 		static void SetupRnG()
 		{
@@ -72,9 +73,6 @@ namespace Tacticowl
 			if (offHanders == null) offHanders = new List<string>();
 			if (twoHanders == null) twoHanders = new List<string>();
 
-			customRotationsCache = new Dictionary<ushort, float>();
-			if (customRotations == null) customRotations = new Dictionary<string, float>();
-
 			for (int i = allWeapons.Length; i-- > 0;)
 			{
 				var def = allWeapons[i];
@@ -96,17 +94,16 @@ namespace Tacticowl
 				if (!heavyWeaponsCache.Contains(shortHash)) offHandersCache.Add(shortHash);
 				else twoHandersCache.Add(shortHash);
 				
-				//Special handling for bows. TODO: make this an xpath patch
 				if (twoHandersCache.Contains(shortHash)) offHandersCache.Remove(shortHash);
 				
 				//Process inversions
 				if (processInversions)
 				{
 					if (modifiedOffHandersCache.Contains(shortHash) != offHandersCache.Contains(shortHash)) offHanders.Add(def.defName);
+					else if (offHanders.Contains(def.defName)) offHanders.Remove(def.defName);
+
 					if (modifiedTwoHandersCache.Contains(shortHash) != twoHandersCache.Contains(shortHash)) twoHanders.Add(def.defName);
-					offHandersCache = modifiedOffHandersCache;
-					twoHandersCache = modifiedTwoHandersCache;
-					return;
+					else if (twoHanders.Contains(def.defName)) twoHanders.Remove(def.defName);
 				}
 				else
 				{
@@ -121,6 +118,31 @@ namespace Tacticowl
 						else twoHandersCache.Add(shortHash);
 					}
 				}
+			}
+
+			//Keep modified, no need to re-apply inversions
+			if (processInversions)
+			{
+				offHandersCache = modifiedOffHandersCache;
+				twoHandersCache = modifiedTwoHandersCache;
+			}
+		}
+		static void SetupDWCustomRotations()
+		{
+			customRotationsCache = new Dictionary<ushort, int>();
+			if (customRotations == null) customRotations = new Dictionary<string, int>();
+
+			for (int i = allWeapons.Length; i-- > 0;)
+			{
+				var def = allWeapons[i];
+				var modExt = def.GetModExtension<CustomRotation>();
+				
+				int extraRotation1 = 0;
+				if (modExt != null) extraRotation1 = modExt.extraRotation;
+				customRotations.TryGetValue(def.defName, out int extraRotation2);
+				
+				int extraRotation = extraRotation1 + extraRotation2;
+				if (extraRotation != 0) customRotationsCache.Add(def.shortHash, extraRotation);
 			}
 		}
 		public static void CheckInvesions()
@@ -324,7 +346,7 @@ namespace Tacticowl
 					}
 					else
 					{
-						options.Label("DW_CustomRotations".Translate());
+						options.Label("DW_CustomOffsets".Translate());
 					}
 				options.End();
 				//========Scroll area=========
@@ -335,25 +357,26 @@ namespace Tacticowl
 					options.Begin(weaponsFilterInnerRect);
 					if (selectedTab == Tab.offsets)
 					{
+						OptionsDrawUtility.lineNumber = 14;
 						options.CheckboxLabeled("DW_Setting_MeleeMirrored_Title".Translate(), ref meleeMirrored, "DW_Setting_MeleeMirrored_Description".Translate());
 						options.CheckboxLabeled("DW_Setting_RangedMirrored_Title".Translate(), ref rangedMirrored, "DW_Setting_RangedMirrored_Description".Translate());
 						
-						options.Label("DW_Setting_MeleeAngle_Title".Translate("0", "360", "270", Math.Round(meleeAngle).ToString()), -1f, "DW_Setting_MeleeAngle_Description".Translate());
+						options.Label("DW_Setting_MeleeAngle_Title".Translate("0", "360", "42", Math.Round(meleeAngle).ToString()), -1f, "DW_Setting_MeleeAngle_Description".Translate());
 						meleeAngle = options.Slider(meleeAngle, 0f, 360f);
 
 						options.Label("DW_Setting_RangedAngle_Title".Translate("0", "360", "135", Math.Round(rangedAngle).ToString()), -1f, "DW_Setting_RangedAngle_Description".Translate());
 						rangedAngle = options.Slider(rangedAngle, 0f, 360f);
 
-						options.Label("DW_Setting_MeleeXOffset_Title".Translate("-2", "2", "0.4", Math.Round(meleeXOffset, 2).ToString()), -1f, "DW_Setting_MeleeXOffset_Description".Translate());
+						options.Label("DW_Setting_MeleeXOffset_Title".Translate("-1", "1", "0.24", Math.Round(meleeXOffset, 2).ToString()), -1f, "DW_Setting_MeleeXOffset_Description".Translate());
 						meleeXOffset = options.Slider(meleeXOffset, -2f, 2f);
 
-						options.Label("DW_Setting_RangedXOffset_Title".Translate("-2", "2", "0.1", Math.Round(rangedXOffset, 2).ToString()), -1f, "DW_Setting_RangedXOffset_Description".Translate());
+						options.Label("DW_Setting_RangedXOffset_Title".Translate("-1", "1", "0.1", Math.Round(rangedXOffset, 2).ToString()), -1f, "DW_Setting_RangedXOffset_Description".Translate());
 						rangedXOffset = options.Slider(rangedXOffset, -2f, 2f);
 
-						options.Label("DW_Setting_MeleeZOffset_Title".Translate("-2", "2", "0", Math.Round(meleeZOffset, 2).ToString()), -1f, "DW_Setting_MeleeZOffset_Description".Translate());
+						options.Label("DW_Setting_MeleeZOffset_Title".Translate("-1", "1", "0.09f", Math.Round(meleeZOffset, 2).ToString()), -1f, "DW_Setting_MeleeZOffset_Description".Translate());
 						meleeZOffset = options.Slider(meleeZOffset, -2f, 2f);
 
-						options.Label("DW_Setting_RangedZOffset_Title".Translate("-2", "2", "0", Math.Round(rangedZOffset, 2).ToString()), -1f, "DW_Setting_RangedZOffset_Description".Translate());
+						options.Label("DW_Setting_RangedZOffset_Title".Translate("-1", "1", "0", Math.Round(rangedZOffset, 2).ToString()), -1f, "DW_Setting_RangedZOffset_Description".Translate());
 						rangedZOffset = options.Slider(rangedZOffset, -2f, 2f);
 					}
 					else options.DrawList(inRect);
@@ -400,6 +423,9 @@ namespace Tacticowl
 			Scribe_Values.Look(ref movementModifierLight, "movementModifierLight", 0.65f);
 			Scribe_Collections.Look(ref heavyWeapons, "heavyWeapons", LookMode.Value);
 			Scribe_Collections.Look(ref forbiddenWeapons, "forbiddenWeapons", LookMode.Value);
+			Scribe_Collections.Look(ref offHanders, "offHanders", LookMode.Value);
+			Scribe_Collections.Look(ref twoHanders, "twoHanders", LookMode.Value);
+			Scribe_Collections.Look(ref customRotations, "customRotations", LookMode.Value, LookMode.Value);
 
 			Scribe_Values.Look(ref meleeMirrored, "meleeMirrored", true);
 			Scribe_Values.Look(ref rangedMirrored, "rangedMirrored", true);
@@ -409,11 +435,11 @@ namespace Tacticowl
 			Scribe_Values.Look(ref staticAccPMainHand, "staticAccPMainHand", 10f);
 			Scribe_Values.Look(ref dynamicCooldownP, "dynamicCooldownP", 5f);
 			Scribe_Values.Look(ref dynamicAccP, "dynamicAccP", 0.5f);
-			Scribe_Values.Look(ref meleeAngle, "meleeAngle", 270f);
+			Scribe_Values.Look(ref meleeAngle, "meleeAngle", 42f);
 			Scribe_Values.Look(ref rangedAngle, "rangedAngle", 135f);
-			Scribe_Values.Look(ref meleeXOffset, "meleeXOffset", 0.4f);
+			Scribe_Values.Look(ref meleeXOffset, "meleeXOffset", 0.24f);
 			Scribe_Values.Look(ref rangedXOffset, "rangedXOffset", 0.1f);
-			Scribe_Values.Look(ref meleeZOffset, "meleeZOffset");
+			Scribe_Values.Look(ref meleeZOffset, "meleeZOffset", 0.09f);
 			Scribe_Values.Look(ref rangedZOffset, "rangedZOffset");
 			Scribe_Values.Look(ref NPCDualWieldChance, "NPCDualWieldChance", 10);
 
@@ -445,22 +471,22 @@ namespace Tacticowl
 			staticAccPMainHand = 10f,
 			dynamicCooldownP = 5f,
 			dynamicAccP = 0.5f,
-			meleeAngle = 270f,
+			meleeAngle = 42f,
 			rangedAngle = 135f,
-			meleeXOffset = 0.4f,
+			meleeXOffset = 0.24f,
 			rangedXOffset = 0.1f,
-			meleeZOffset,
+			meleeZOffset = 0.09f,
 			rangedZOffset;
         public static HashSet<ushort> heavyWeaponsCache,
 			 forbiddenWeaponsCache,
 			 offHandersCache,
 			 twoHandersCache;
-		public static Dictionary<ushort, float> customRotationsCache;
+		public static Dictionary<ushort, int> customRotationsCache;
 		public static List<string> heavyWeapons,
 			 forbiddenWeapons,
 			 offHanders,
 			 twoHanders;
-		public static Dictionary<string, float> customRotations;
+		public static Dictionary<string, int> customRotations;
         
 		#region settings UI
 		public static float weightLimitFilter = weightLimitFilterDefault;

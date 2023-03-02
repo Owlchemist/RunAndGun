@@ -18,10 +18,11 @@ namespace Tacticowl.DualWield
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             bool found = false;
+            var method = AccessTools.Method(typeof(Pawn_StanceTracker), nameof(Pawn_StanceTracker.StanceTrackerTick));
             foreach (CodeInstruction instruction in instructions)
             {
                 yield return instruction;
-                if (!found && instruction.opcode == OpCodes.Callvirt && instruction.OperandIs(AccessTools.Method(typeof(Pawn_StanceTracker), nameof(Pawn_StanceTracker.StanceTrackerTick))))
+                if (!found && instruction.opcode == OpCodes.Callvirt && instruction.OperandIs(method))
                 {
                     found = true;
                     yield return new CodeInstruction(OpCodes.Ldarg_0);
@@ -37,6 +38,7 @@ namespace Tacticowl.DualWield
         }
     }
     //Also try start off hand weapons attack when trystartattack is called
+    //Only used by attacking when just standing around, or direct commands
     [HarmonyPatch(typeof(Pawn), nameof(Pawn.TryStartAttack))]
     class Patch_Pawn_TryStartAttack
     {
@@ -47,12 +49,13 @@ namespace Tacticowl.DualWield
         static void Postfix(Pawn __instance, LocalTargetInfo targ, ref bool __result)
         {
             //Check if it's an enemy that's attacked, and not a fire or an arguing husband
-            if ((!__instance.InMentalState && !(targ.Thing is Fire)))
+            if ((!__instance.InMentalState && targ.Thing is not Fire))
             {
                 __instance.TryStartOffHandAttack(targ, ref __result);
             }
         }
     }
+    
     //If main weapon has shorter range than off hand weapon, use offHand weapon instead. 
     [HarmonyPatch(typeof(Pawn), nameof(Pawn.CurrentEffectiveVerb), MethodType.Getter)]
     class Patch_Pawn_CurrentEffectiveVerb

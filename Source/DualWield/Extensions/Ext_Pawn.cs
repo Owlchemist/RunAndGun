@@ -13,9 +13,9 @@ namespace Tacticowl.DualWield
             {
                 return;
             }
+            
             var offHandStance = pawn.GetOffHandStance();
-            if (offHandStance is Stance_Warmup_DW || offHandStance is Stance_Cooldown || 
-                pawn.story != null && pawn.story.DisabledWorkTagsBackstoryAndTraits.HasFlag(WorkTags.Violent))
+            if (offHandStance is Stance_Warmup_DW || offHandStance is Stance_Cooldown || pawn.WorkTagIsDisabled(WorkTags.Violent))
             {
                 return;
             }
@@ -26,10 +26,11 @@ namespace Tacticowl.DualWield
             {
                 return;
             }
+
             if (pawn.TryGetOffHandAttackVerb(targ.Thing, out Verb verb, true))
             {
                 if (__result) return;
-                __result = verb.OffHandTryStartCastOn(targ);
+                __result = verb.TryStartCastOn(targ);
             }
         }
         static bool TryGetOffHandAttackVerb(this Pawn instance, Thing target, out Verb verb, bool allowManualCastWeapons = false)

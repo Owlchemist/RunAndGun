@@ -31,52 +31,56 @@ namespace Tacticowl.DualWield
         }
         static Command_VerbTarget CreateVerbTargetCommand(VerbTracker __instance, Thing ownerThing, Verb verb)
         {
-            Command_VerbTarget command_VerbTarget = new Command_VerbTarget();
-            command_VerbTarget.defaultDesc = ownerThing.LabelCap + ": " + ownerThing.def.description.CapitalizeFirst();
-            command_VerbTarget.icon = ownerThing.def.uiIcon;
-            command_VerbTarget.iconAngle = ownerThing.def.uiIconAngle;
-            command_VerbTarget.iconOffset = ownerThing.def.uiIconOffset;
-            command_VerbTarget.tutorTag = "VerbTarget";
-            command_VerbTarget.verb = verb;
+            Command_VerbTarget command_VerbTarget = new Command_VerbTarget()
+            {
+                defaultDesc = ownerThing.LabelCap + ": " + ownerThing.def.description.CapitalizeFirst(),
+                icon = ownerThing.def.uiIcon,
+                iconAngle = ownerThing.def.uiIconAngle,
+                iconOffset = ownerThing.def.uiIconOffset,
+                tutorTag = "VerbTarget",
+                verb = verb
+            };
             if (verb.caster.Faction != Faction.OfPlayer)
             {
                 command_VerbTarget.Disable("CannotOrderNonControlled".Translate());
             }
-            else if (verb.CasterIsPawn)
+            else if (verb.CasterPawn is Pawn casterPawn)
             {
-                if (verb.CasterPawn.WorkTagIsDisabled(WorkTags.Violent))
+                if (casterPawn.WorkTagIsDisabled(WorkTags.Violent))
                 {
-                    command_VerbTarget.Disable("IsIncapableOfViolence".Translate(verb.CasterPawn.LabelShort, verb.CasterPawn));
+                    command_VerbTarget.Disable("IsIncapableOfViolence".Translate(casterPawn.LabelShort, casterPawn));
                 }
-                else if (!verb.CasterPawn.drafter.Drafted)
+                else if (!casterPawn.drafter.Drafted)
                 {
-                    command_VerbTarget.Disable("IsNotDrafted".Translate(verb.CasterPawn.LabelShort, verb.CasterPawn));
+                    command_VerbTarget.Disable("IsNotDrafted".Translate(casterPawn.LabelShort, casterPawn));
                 }
             }
             return command_VerbTarget;
         }
         static Command_VerbTarget CreateDualWieldCommand(Thing ownerThing, Thing offHandThing, Verb verb)
         {
-            Command_DualWield command_VerbTarget = new Command_DualWield(offHandThing);
-            command_VerbTarget.defaultDesc = ownerThing.LabelCap + ": " + ownerThing.def.description.CapitalizeFirst();
-            command_VerbTarget.icon = ownerThing.def.uiIcon;
-            command_VerbTarget.iconAngle = ownerThing.def.uiIconAngle;
-            command_VerbTarget.iconOffset = ownerThing.def.uiIconOffset;
-            command_VerbTarget.tutorTag = "VerbTarget";
-            command_VerbTarget.verb = verb;
+            Command_DualWield command_VerbTarget = new Command_DualWield(offHandThing)
+            {
+                defaultDesc = ownerThing.LabelCap + ": " + ownerThing.def.description.CapitalizeFirst(),
+                icon = ownerThing.def.uiIcon,
+                iconAngle = ownerThing.def.uiIconAngle,
+                iconOffset = ownerThing.def.uiIconOffset,
+                tutorTag = "VerbTarget",
+                verb = verb
+            };
             if (verb.caster.Faction != Faction.OfPlayer)
             {
                 command_VerbTarget.Disable("CannotOrderNonControlled".Translate());
             }
-            else if (verb.CasterIsPawn)
+            else if (verb.CasterPawn is Pawn casterPawn)
             {
-                if (verb.CasterPawn.story.DisabledWorkTagsBackstoryAndTraits.HasFlag(WorkTags.Violent))
+                if (casterPawn.WorkTagIsDisabled(WorkTags.Violent))
                 {
-                    command_VerbTarget.Disable("IsIncapableOfViolence".Translate(verb.CasterPawn.LabelShort, verb.CasterPawn));
+                    command_VerbTarget.Disable("IsIncapableOfViolence".Translate(casterPawn.LabelShort, casterPawn));
                 }
-                else if (!verb.CasterPawn.drafter.Drafted)
+                else if (!casterPawn.drafter.Drafted)
                 {
-                    command_VerbTarget.Disable("IsNotDrafted".Translate(verb.CasterPawn.LabelShort, verb.CasterPawn));
+                    command_VerbTarget.Disable("IsNotDrafted".Translate(casterPawn.LabelShort, casterPawn));
                 }
             }
             return command_VerbTarget;
@@ -97,6 +101,7 @@ namespace Tacticowl.DualWield
                     {
                         //Remove offHand gizmo when dual wielding
                         //Don't remove offHand gizmo when offHand weapon is the only weapon being carried by the pawn
+                        //TODO: look at this closer
                         if (peqt.pawn.GetOffHander(out ThingWithComps offHandEquip) && offHandEquip == twc && offHandEquip != peqt.Primary)
                         {
                             continue;

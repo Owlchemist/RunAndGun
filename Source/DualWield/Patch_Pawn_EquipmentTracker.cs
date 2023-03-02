@@ -18,9 +18,10 @@ namespace Tacticowl.DualWield
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             bool found = false;
+            var method = AccessTools.Property(typeof(Pawn_EquipmentTracker), nameof(Pawn_EquipmentTracker.Primary)).GetGetMethod();
             foreach (CodeInstruction instruction in instructions)
             {
-                if (!found && instruction.opcode == OpCodes.Call && instruction.OperandIs(AccessTools.Property(typeof(Pawn_EquipmentTracker), nameof(Pawn_EquipmentTracker.Primary)).GetGetMethod()))
+                if (!found && instruction.opcode == OpCodes.Call && instruction.OperandIs(method))
                 {
                     found = true;
                     yield return new CodeInstruction(OpCodes.Call, typeof(Patch_Pawn_EquipmentTracker_AddEquipment).GetMethod(nameof(PrimaryNoOffHand)));

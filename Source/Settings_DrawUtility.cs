@@ -103,8 +103,35 @@ namespace Tacticowl
 			if (Widgets.ButtonInvisible(rect, true))
 			{
 				checkOn = !checkOn;
-				if (checkOn) SoundDefOf.Checkbox_TurnedOn.PlayOneShotOnCamera(null);
-				else SoundDefOf.Checkbox_TurnedOff.PlayOneShotOnCamera(null);
+				if (checkOn)
+				{
+					SoundDefOf.Checkbox_TurnedOn.PlayOneShotOnCamera(null);
+					if (selectedTab == Tab.customRotations)
+					{
+						if (!customRotationsCache.ContainsKey(def.shortHash)) customRotationsCache.Add(def.shortHash, (int)def.equippedAngleOffset);
+						if (!customRotations.ContainsKey(def.defName)) customRotations.Add(def.defName, (int)def.equippedAngleOffset);
+
+						customRotationsCache.TryGetValue(def.shortHash, out int defaultValue);
+						if (defaultValue == 0) defaultValue = (int)def.equippedAngleOffset;
+						
+						System.Func<int, string> textGetter = x => "DW_Setting_CustomRotations_SetRotation".Translate(x);
+						Dialog_Slider window = new Dialog_Slider(textGetter, -180, 180, delegate(int value)
+						{
+							customRotationsCache[def.shortHash] = value;
+							customRotations[def.defName] = value;
+						}, defaultValue, 1f);
+						Find.WindowStack.Add(window);
+					}
+				}
+				else 
+				{
+					if (selectedTab == Tab.customRotations)
+					{
+						if (customRotationsCache.ContainsKey(def.shortHash)) customRotationsCache.Remove(def.shortHash);
+						if (customRotations.ContainsKey(def.defName)) customRotations.Remove(def.defName);
+					}
+					SoundDefOf.Checkbox_TurnedOff.PlayOneShotOnCamera(null);
+				}
 			}
 			Widgets.CheckboxDraw(rect.xMax - 24f, rect.y, checkOn, false, 24f, null, null);
 		}

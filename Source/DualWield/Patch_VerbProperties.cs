@@ -35,45 +35,10 @@ namespace Tacticowl.DualWield
         }
         static float CalcCooldownPenalty(float __result, SkillRecord skillRecord, float staticPenalty)
         {
-            //TODO: make mod settings
             float perLevelPenalty = Settings.dynamicCooldownP / 100f;
             int levelsShort = 20 - skillRecord.levelInt;
             float dynamicPenalty = perLevelPenalty * levelsShort;
             __result *= 1.0f + staticPenalty + dynamicPenalty;
-            return __result;
-        }
-    }
-    [HarmonyPatch(typeof(VerbProperties), nameof(VerbProperties.AdjustedAccuracy))]
-    class Patch_VerbProperties_AdjustedAccuracy
-    {
-        static void Postfix(VerbProperties __instance, Thing equipment, ref float __result)
-        {
-            if (equipment != null && equipment.ParentHolder is Pawn_EquipmentTracker peqt)
-            {
-                Pawn pawn = peqt.pawn;
-                if (pawn.skills == null)
-                {
-                    return;
-                }
-                SkillRecord skillRecord = __instance.IsMeleeAttack ? pawn.skills.GetSkill(SkillDefOf.Melee) : pawn.skills.GetSkill(SkillDefOf.Shooting);
-                if (equipment is ThingWithComps twc && twc.IsOffHandedWeapon())
-                {
-                    __result = CalcAccuracyPenalty(__result, skillRecord, Settings.staticAccPOffHand / 100f);
-                }
-                else if (pawn.GetOffHander(out ThingWithComps offHandEq))
-                {
-                    __result = CalcAccuracyPenalty(__result, skillRecord, Settings.staticAccPMainHand / 100f);
-                }
-            }
-        }
-
-        static float CalcAccuracyPenalty(float __result, SkillRecord skillRecord, float staticPenalty)
-        {
-            //TODO: make mod settings
-            float perLevelPenalty = Settings.dynamicAccP / 100f;
-            int levelsShort = 20 - skillRecord.levelInt;
-            float dynamicPenalty = perLevelPenalty * levelsShort;
-            __result *= 1.0f - staticPenalty - dynamicPenalty;
             return __result;
         }
     }

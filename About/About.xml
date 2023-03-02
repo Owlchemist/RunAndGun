@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ModMetaData>
-	<name>Tacticowl (unlisted beta)</name>
+	<name>Tacticowl (temporary beta)</name>
 	<author>Roolo, Owlchemist</author>
 	<supportedVersions>
 		<li>1.4</li>
 	</supportedVersions>
-	<modVersion>2.0.10</modVersion>
+	<modVersion>2.0.15</modVersion>
 	<packageId>Owlchemist.Tacticowl</packageId>
 	<modDependencies>
 		<li>

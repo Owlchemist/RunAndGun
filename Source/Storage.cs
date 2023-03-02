@@ -31,7 +31,7 @@ namespace Tacticowl
 		}
 		#endregion
 		#region Dual Wield
-		public static bool IsOffHandedWeapon(this ThingWithComps thing)
+		public static bool IsOffHandedWeapon(this Thing thing)
 		{
 			return Storage._instance.offHands.Contains(thing);
 		}
@@ -119,6 +119,11 @@ namespace Tacticowl
 			_instance = this;
 		}
 
+		public override void FinalizeInit()
+		{
+			foreach (var (key, value) in store) if (value.offHandWeapon != null) hasOffhandCache.Add(key.thingIDNumber);
+		}
+
 		static List<Pawn> keysWorkingList = new List<Pawn>();
 		static List<PawnStorage> valuesWorkingList = new List<PawnStorage>();
 		
@@ -168,8 +173,6 @@ namespace Tacticowl
 					array
 				});
 			}
-
-			if (Scribe.mode == LoadSaveMode.PostLoadInit && offHandWeapon != null) Storage._instance.hasOffhandCache.Add(stances.pawn.thingIDNumber);
 		}
 	}
 }

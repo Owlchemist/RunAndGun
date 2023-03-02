@@ -9,8 +9,12 @@ using Settings = Tacticowl.ModSettings_Tacticowl;
 namespace Tacticowl
 {
     [HarmonyPatch(typeof(Pawn), nameof(Pawn.GetGizmos))]
-    public class Patch_PawnGetGizmos
+    class Patch_PawnGetGizmos
     {
+        static bool Prepare()
+        {
+            return Settings.runAndGunEnabled;
+        }
         static IEnumerable<Gizmo> Postfix(IEnumerable<Gizmo> values, Pawn __instance)
         {
             foreach (var gizmo in values) yield return gizmo;

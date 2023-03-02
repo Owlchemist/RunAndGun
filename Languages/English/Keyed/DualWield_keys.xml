@@ -44,7 +44,7 @@
 	<DW_Setting_RangedMirrored_Title>Ranged weapons mirrored</DW_Setting_RangedMirrored_Title>
 	<DW_Setting_RangedMirrored_Description>If this is checked, dual wielded ranged weapons will be drawn mirrored in regards to each other.</DW_Setting_RangedMirrored_Description>
 	
-	<DW_Setting_CustomRotations_SetRotation>Extra rotation: {0} degrees.</DW_Setting_CustomRotations_SetRotation>
+	<DW_Setting_CustomRotations_SetRotation>Extra rotation: {0}º</DW_Setting_CustomRotations_SetRotation>
 	
 	<DW_Setting_NPCDualWieldChance_Title>NPC/enemy dual wield chance (Default: {2}% Current: {3}%)</DW_Setting_NPCDualWieldChance_Title>
 	<DW_Setting_NPCDualWieldChance_Description>Chance a given NPC (enemy or friendly) uses dual wielding, provided it did not spawn with a two-handed weapon.</DW_Setting_NPCDualWieldChance_Description>
@@ -62,6 +62,7 @@
 	
 	<DW_Twohanders>Two-handed weapons cannot be dual wielded, and require both arms to operate.</DW_Twohanders>
 	<DW_CustomRotations>Click on any weapon to apply a custom rotation angle.</DW_CustomRotations>
+	<DW_CustomOffsets>Customize the graphical offsets for weapons.</DW_CustomOffsets>
 	
 	<DW_EnableDualWield_Title>Enable Dual Wield module</DW_EnableDualWield_Title>
 	<DW_EnableDualWield_Description>If disabled, pawns may not dual wield weapons.</DW_EnableDualWield_Description>

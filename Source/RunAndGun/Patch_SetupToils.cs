@@ -8,19 +8,23 @@ using Settings = Tacticowl.ModSettings_Tacticowl;
 namespace Tacticowl
 {
 	[HarmonyPatch(typeof(JobDriver), nameof(JobDriver.SetupToils))]
-	static class Patch_SetupToils
+	class Patch_SetupToils
 	{
 		static TargetScanFlags targetScanFlags = TargetScanFlags.NeedLOSToPawns | TargetScanFlags.NeedLOSToNonPawns | TargetScanFlags.NeedThreat | TargetScanFlags.NeedAutoTargetable;
+		static bool Prepare()
+        {
+            return Settings.runAndGunEnabled;
+        }
 		static void Postfix(JobDriver __instance)
 		{
-			if (__instance is not JobDriver_Goto jobDriver || !__instance.pawn.RunsAndGuns() || __instance.toils.Count == 0)
+			if (__instance is not JobDriver_Goto jobDriver || !__instance.pawn.RunsAndGuns() || __instance.toils.Count == 0 || jobDriver.pawn == null)
 			{
 				return;
 			}
-			
+
+			int ticker = 10;
 			__instance.toils[0].AddPreTickAction(delegate
 			{
-				int ticker = 10;
 				Pawn pawn = jobDriver.pawn;
 				if (ticker-- == 0)
 				{
@@ -33,9 +37,11 @@ namespace Tacticowl
 				}
 			});
 		}
+
+		//This is basically a "lite" version of JobDriver_Wait.CheckForAutoAttack
 		static void CheckForAutoAttack(Pawn pawn, JobDriver jobDriver)
 		{
-			if ((pawn.story == null || !pawn.story.DisabledWorkTagsBackstoryAndTraits.HasFlag(WorkTags.Violent)) &&
+			if (!pawn.WorkTagIsDisabled(WorkTags.Violent) &&
 				pawn.Faction != null &&
 				pawn.stances.curStance is not Stance_RunAndGun &&
 				(pawn.drafter == null || pawn.drafter.FireAtWill))

@@ -6,8 +6,12 @@ using Settings = Tacticowl.ModSettings_Tacticowl;
 namespace Tacticowl
 {
     [HarmonyPatch(typeof(Pawn), nameof(Pawn.TicksPerMove))]
-    static class Patch_TicksPerMove
+    class Patch_TicksPerMove
     {
+        static bool Prepare()
+        {
+            return Settings.runAndGunEnabled;
+        }
         static int Postfix(int __result, Pawn __instance)
         {
             if (__instance == null || __instance.stances == null)
