@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace Tacticowl
 {
     [HarmonyPatch(typeof(AttackTargetsCache), nameof(AttackTargetsCache.GetPotentialTargetsFor))]
-    static class Patch_GetPotentialTargetsFor
+    class Patch_GetPotentialTargetsFor
     {
         static void Postfix(IAttackTargetSearcher th, List<IAttackTarget> __result)
         {    

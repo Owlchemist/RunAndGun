@@ -92,6 +92,10 @@ namespace Tacticowl
         {
             return GetOffHandStanceTracker(pawn).curStance;
         }
+		public static void DrawOffHandStance(this Pawn pawn)
+        {
+			if (pawn.HasOffHand()) pawn.GetOffHandStanceTracker().StanceTrackerDraw();
+        }
         public static Pawn_StanceTracker GetOffHandStanceTracker(this Pawn pawn)
         {
 			pawn.GetTacticowlStorage(out PawnStorage pawnStorage, true);
@@ -128,8 +132,9 @@ namespace Tacticowl
 		static List<PawnStorage> valuesWorkingList = new List<PawnStorage>();
 		
 		public override void ExposeData()
-		   {
-            base.ExposeData();
+		{
+			if (Scribe.mode == LoadSaveMode.Saving) store.RemoveAll(x => x.Key.Destroyed);
+
 			Scribe_Collections.Look(ref RnG, "RnG", LookMode.Reference);
 			Scribe_Collections.Look(ref SnD, "SnD", LookMode.Reference);
 			Scribe_Collections.Look(ref offHands, "offHands", LookMode.Reference);

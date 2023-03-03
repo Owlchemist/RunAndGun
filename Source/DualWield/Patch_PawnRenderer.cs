@@ -27,8 +27,7 @@ namespace Tacticowl.DualWield
 					found = true;
 					yield return new CodeInstruction(OpCodes.Ldarg_0);
 					yield return new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(PawnRenderer), nameof(PawnRenderer.pawn)));
-					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(StorageUtility), nameof(StorageUtility.GetOffHandStanceTracker)));
-					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Pawn_StanceTracker), nameof(Pawn_StanceTracker.StanceTrackerDraw)));
+					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(StorageUtility), nameof(StorageUtility.DrawOffHandStance)));
 				}
 			}
 			if (!found) Log.Error("[Tacticowl] Patch_PawnRenderer_RenderPawnAt transpiler failed to find its target. Did RimWorld update?");

@@ -9,10 +9,7 @@ namespace Tacticowl
 		public override Job TryGiveJob(Pawn pawn)
 		{
 			var job = base.TryGiveJob(pawn);
-			if (job != null)
-            {
-				job.expiryInterval = 30;
-            }
+			if (job != null) job.expiryInterval = 30;
 			return job;
 		}
 	}

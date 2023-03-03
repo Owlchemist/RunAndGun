@@ -8,7 +8,7 @@ using Verse.AI;
 namespace Tacticowl
 {
 	[HarmonyPatch(typeof(Pawn_DraftController), nameof(Pawn_DraftController.Drafted), MethodType.Setter)]
-	static class Patch_Drafted
+	class Patch_Drafted
 	{
 		static void Postfix(Pawn_DraftController __instance)
 		{
@@ -17,7 +17,7 @@ namespace Tacticowl
 	}
 
 	[HarmonyPatch(typeof(Pawn_DraftController), nameof(Pawn_DraftController.GetGizmos))]
-	static class Patch_GetGizmos
+	class Patch_GetGizmos
 	{
 		static IEnumerable<Gizmo> Postfix(IEnumerable<Gizmo> values, Pawn_DraftController __instance)
 		{
