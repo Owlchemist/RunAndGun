@@ -42,7 +42,7 @@ namespace Tacticowl.DualWield
                 return __result;
             }
 
-            if (__instance.Pawn.TryGetMeleeVerbOffHand(target, out Verb verb))
+            if (DualWieldUtility.TryGetMeleeVerbOffHand(__instance.Pawn, target, out Verb verb))
             {
                 if (__result) return __result;
                 return verb.TryStartCastOn(target);

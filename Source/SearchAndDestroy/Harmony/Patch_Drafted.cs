@@ -29,11 +29,11 @@ namespace Tacticowl
 			{
 				if (pawn.equipment.Primary == null || pawn.equipment.Primary.def.IsMeleeWeapon)
 				{
-					yield return CreateGizmo_SearchAndDestroy_Melee(__instance.pawn);
+					yield return CreateGizmo_SearchAndDestroy_Melee(pawn);
 				}
 				else
 				{
-					yield return CreateGizmo_SearchAndDestroy_Ranged(__instance.pawn);
+					yield return CreateGizmo_SearchAndDestroy_Ranged(pawn);
 				}
 			}
 		}

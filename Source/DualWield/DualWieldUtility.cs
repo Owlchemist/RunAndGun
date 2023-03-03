@@ -5,9 +5,9 @@ using Settings = Tacticowl.ModSettings_Tacticowl;
 
 namespace Tacticowl.DualWield
 {
-    public static class Ext_Pawn
+    public static class DualWieldUtility
     {
-        public static void TryStartOffHandAttack(this Pawn pawn, LocalTargetInfo targ, ref bool __result)
+        public static void TryStartOffHandAttack(Pawn pawn, LocalTargetInfo targ, ref bool __result)
         {
             if (pawn.equipment == null || !pawn.GetOffHander(out ThingWithComps offHandEquip))
             {
@@ -27,13 +27,13 @@ namespace Tacticowl.DualWield
                 return;
             }
 
-            if (pawn.TryGetOffHandAttackVerb(targ.Thing, out Verb verb, true))
+            if (TryGetOffHandAttackVerb(pawn, targ.Thing, out Verb verb, true))
             {
                 if (__result) return;
                 __result = verb.TryStartCastOn(targ);
             }
         }
-        static bool TryGetOffHandAttackVerb(this Pawn instance, Thing target, out Verb verb, bool allowManualCastWeapons = false)
+        static bool TryGetOffHandAttackVerb(Pawn instance, Thing target, out Verb verb, bool allowManualCastWeapons = false)
         {
             verb = null;
             if (instance.GetOffHander(out ThingWithComps offHandEquip))
@@ -46,21 +46,10 @@ namespace Tacticowl.DualWield
                     verb = compEquippable.PrimaryVerb;
                 }
             }
-            else instance.TryGetMeleeVerbOffHand(target, out verb);
+            else TryGetMeleeVerbOffHand(instance, target, out verb);
             return verb != null;
         }
-        public static bool HasMissingArmOrHand(this Pawn instance)
-        {
-            var list = instance.health.hediffSet.GetMissingPartsCommonAncestors();
-            for (int i = list.Count; i-- > 0;)
-            {
-                var partDef = list[i].Part.def;
-                if (partDef == BodyPartDefOf.Hand || partDef == BodyPartDefOf.Arm) return true;
-            }
-            
-            return false;
-        }
-        public static bool TryGetMeleeVerbOffHand(this Pawn instance, Thing target, out Verb verb)
+        public static bool TryGetMeleeVerbOffHand(Pawn instance, Thing target, out Verb verb)
         {
             verb = null;
             if (instance.GetOffHander(out ThingWithComps offHandEquip))
@@ -81,6 +70,24 @@ namespace Tacticowl.DualWield
                 }
             }
             return verb != null;
+        }
+        public static void MakeRoomForOffHand(Pawn pawn)
+        {
+            if (!pawn.GetOffHander(out ThingWithComps currentOffHand) && Settings.VFECoreEnabled) currentOffHand = Settings.OffHandShield(pawn);
+            if (currentOffHand != null)
+            {
+                bool success = false;
+                if (currentOffHand is not Apparel)
+                {
+                    success = pawn.equipment.TryDropEquipment(currentOffHand, out currentOffHand, pawn.Position, true);
+                }
+                else if (Settings.VFECoreEnabled && currentOffHand is Apparel apparel)
+                {
+                    success = pawn.apparel.TryDrop(apparel, out apparel, pawn.Position, true);
+                }
+
+                if (!success) Log.Error("[Tacticowl] " + pawn.Label + " couldn't make room for equipment");
+            }
         }
     }
 }

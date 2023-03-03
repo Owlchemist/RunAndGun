@@ -27,87 +27,75 @@ namespace Tacticowl.DualWield
 					found = true;
 					yield return new CodeInstruction(OpCodes.Ldarg_0);
 					yield return new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(PawnRenderer), nameof(PawnRenderer.pawn)));
-					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(StorageUtility), nameof(StorageUtility.DrawOffHandStance)));
+					yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(DualWieldExtensions), nameof(DualWieldExtensions.DrawOffHandStance)));
 				}
 			}
 			if (!found) Log.Error("[Tacticowl] Patch_PawnRenderer_RenderPawnAt transpiler failed to find its target. Did RimWorld update?");
 		}
 	}
-	[HarmonyPatch(typeof(PawnRenderer), nameof(PawnRenderer.DrawEquipmentAiming))]
+	[HarmonyPatch(typeof(PawnRenderer), nameof(PawnRenderer.DrawEquipment))]
 	class Patch_PawnRenderer_DrawEquipmentAiming
 	{
 		static bool Prepare()
 		{
 			return Settings.dualWieldEnabled;
 		}
-		static bool Prefix(PawnRenderer __instance, Thing eq, Vector3 drawLoc, float aimAngle)
+		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            return instructions.MethodReplacer(AccessTools.Method(typeof(PawnRenderer), nameof(PawnRenderer.DrawEquipmentAiming)),
+				AccessTools.Method(typeof(Patch_PawnRenderer_DrawEquipmentAiming), nameof(Patch_PawnRenderer_DrawEquipmentAiming.DrawBothEquipmentAiming)));
+        }
+		public static void DrawBothEquipmentAiming(PawnRenderer __instance, Thing eq, Vector3 drawLoc, float aimAngle)
 		{
 			Pawn pawn = __instance.pawn;
 			if (!pawn.GetOffHander(out ThingWithComps offHandEquip))
 			{
-				return true;
+				__instance.DrawEquipmentAiming(eq, drawLoc, aimAngle);
+				return;
 			}
 			
-			float mainHandAngle = aimAngle;
-			float offHandAngle = aimAngle;
-			Stance_Busy mainStance = pawn.stances.curStance as Stance_Busy;
-			
-			LocalTargetInfo focusTarg;
-			bool mainHandAiming = false;
-			bool offHandAiming = false;
-			if (mainStance != null && !mainStance.neverAimWeapon)
+			LocalTargetInfo focusTarg = null;
+			float mainHandAngle = aimAngle, offHandAngle = aimAngle;
+			bool mainHandAiming = false, offHandAiming = false;
+			if (pawn.stances.curStance is Stance_Busy mainStance && !mainStance.neverAimWeapon)
 			{
 				focusTarg = mainStance.focusTarg;
 				mainHandAiming = CurrentlyAiming(mainStance);
 			}
-			else if (pawn.GetOffHandStance() is Stance_Busy offHandStance && !offHandStance.neverAimWeapon)
+
+			if (pawn.GetOffHandStance() is Stance_Busy offHandStance && !offHandStance.neverAimWeapon)
 			{
 				focusTarg = offHandStance.focusTarg;
 				offHandAiming = CurrentlyAiming(offHandStance);
 			}
-			else focusTarg = null;
 
 			//When wielding offHand weapon, facing south, and not aiming, draw differently 
 			SetAnglesAndOffsets(eq, offHandEquip, pawn, out Vector3 offsetMainHand, out Vector3 offsetOffHand, ref mainHandAngle, ref offHandAngle, mainHandAiming, offHandAiming);
 
-			if (offHandEquip != pawn.equipment.Primary) DrawEquipmentAimingOverride(eq, drawLoc + offsetMainHand, mainHandAngle);
+			//This draws the main hand weapon
+			if (mainHandAiming || !offHandAiming) __instance.DrawEquipmentAiming(eq, drawLoc + offsetMainHand, mainHandAngle);
+			else if (offHandAiming)
+			{
+				//TODO: This all needs to be cleaned up. It's a copy-paste of the PawnRenderer.DrawEquipment math. Probably a better way to do this
+				var num = GetAimingRotation(pawn, focusTarg);
+				float equipmentDrawDistanceFactor = pawn.ageTracker.CurLifeStage.equipmentDrawDistanceFactor;
+				var vector = pawn.DrawPos + new Vector3(0f, 0.1f, 0.4f + pawn.equipment.Primary.def.equippedDistanceOffset).RotatedBy(num) * equipmentDrawDistanceFactor;
+				__instance.DrawEquipmentAiming(eq, vector, num);
+			}
+			
+
+			//This draws the offhand while aiming
 			if ((offHandAiming || mainHandAiming) && focusTarg != null)
 			{
 				offHandAngle = GetAimingRotation(pawn, focusTarg);
-				offsetOffHand.y += 0.1f;
-				Vector3 adjustedDrawPos = pawn.DrawPos + new Vector3(0f, 0f, 0.4f).RotatedBy(offHandAngle) + offsetOffHand;
-				DrawEquipmentAimingOverride(offHandEquip, adjustedDrawPos, offHandAngle);
+				Vector3 adjustedDrawPos = pawn.DrawPos + new Vector3(0f, 0.1f, 0.4f).RotatedBy(offHandAngle) + offsetOffHand;
+				__instance.DrawEquipmentAiming(offHandEquip, adjustedDrawPos, offHandAngle);
 			}
-			else DrawEquipmentAimingOverride(offHandEquip, drawLoc + offsetOffHand, offHandAngle);
-			return false;      
+			//This draws the offhand while not aiming
+			else __instance.DrawEquipmentAiming(offHandEquip, drawLoc + offsetOffHand, offHandAngle);
 		}
-
-		static void DrawEquipmentAimingOverride(Thing eq, Vector3 drawLoc, float aimAngle)
-		{
-			float num = aimAngle - 90f;
-			Mesh mesh;
-			if (aimAngle > 20f && aimAngle < 160f)
-			{
-				mesh = MeshPool.plane10;
-				num += eq.def.equippedAngleOffset;
-			}
-			else if (aimAngle > 200f && aimAngle < 340f)
-			{
-				mesh = MeshPool.plane10Flip;
-				num -= 180f;
-				num -= eq.def.equippedAngleOffset;
-			}
-			else
-			{
-				mesh = MeshPool.plane10;
-				num += eq.def.equippedAngleOffset;
-			}
-			num %= 360f;
-			Graphic_StackCount graphic_StackCount = eq.Graphic as Graphic_StackCount;
-			Material matSingle = graphic_StackCount != null ? graphic_StackCount.SubGraphicForStackCount(1, eq.def).MatSingle : eq.Graphic.MatSingle;
-
-			Graphics.DrawMesh(mesh, drawLoc, Quaternion.AngleAxis(num, Vector3.up), matSingle, 0);
-		}
+		
+		//TODO: This should probably be refactored in some way, perhaps splitting it between offhand and main hand?
 		static void SetAnglesAndOffsets(Thing eq, ThingWithComps offHandEquip, Pawn pawn, out Vector3 offsetMainHand, out Vector3 offsetOffHand, ref float mainHandAngle, ref float offHandAngle, bool mainHandAiming, bool offHandAiming)
 		{
 			var pawnRotation = pawn.Rotation;

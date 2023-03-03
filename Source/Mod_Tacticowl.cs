@@ -11,9 +11,12 @@ namespace Tacticowl
 	public static class Setup
 	{
 		public static ThingDef[] allWeapons;
+		public delegate ThingWithComps OffHandShield(Pawn pawn);
 	
 		static Setup()
 		{
+			SetupModCompatability();
+
 			var harmony = new HarmonyLib.Harmony("Tacticowl");
 			harmony.PatchAll();
 
@@ -91,10 +94,8 @@ namespace Tacticowl
 				}
 				
 				//Sync with run n gun light weapons
-				if (!heavyWeaponsCache.Contains(shortHash)) offHandersCache.Add(shortHash);
+				if (!heavyWeaponsCache.Contains(shortHash) && !twoHandersCache.Contains(shortHash)) offHandersCache.Add(shortHash);
 				else twoHandersCache.Add(shortHash);
-				
-				if (twoHandersCache.Contains(shortHash)) offHandersCache.Remove(shortHash);
 				
 				//Process inversions
 				if (processInversions)
@@ -168,6 +169,15 @@ namespace Tacticowl
 					if (!forbiddenWeaponsCache.Contains(weapon.shortHash)) forbiddenWeapons.Add(weapon.defName);
 				}
 				else if (forbiddenWeaponsCache.Contains(weapon.shortHash)) forbiddenWeapons.Add(weapon.defName);
+			}
+		}
+		static void SetupModCompatability()
+		{
+			var method = HarmonyLib.AccessTools.TypeByName("VFECore.ShieldUtility")?.GetMethod("OffHandShield");
+			if (method != null)
+			{
+				ModSettings_Tacticowl.OffHandShield = HarmonyLib.AccessTools.MethodDelegate<OffHandShield>(method);
+				VFECoreEnabled = true;
 			}
 		}
 	}
@@ -373,7 +383,7 @@ namespace Tacticowl
 						options.Label("DW_Setting_RangedXOffset_Title".Translate("-1", "1", "0.1", Math.Round(rangedXOffset, 2).ToString()), -1f, "DW_Setting_RangedXOffset_Description".Translate());
 						rangedXOffset = options.Slider(rangedXOffset, -2f, 2f);
 
-						options.Label("DW_Setting_MeleeZOffset_Title".Translate("-1", "1", "0.09f", Math.Round(meleeZOffset, 2).ToString()), -1f, "DW_Setting_MeleeZOffset_Description".Translate());
+						options.Label("DW_Setting_MeleeZOffset_Title".Translate("-1", "1", "0.09", Math.Round(meleeZOffset, 2).ToString()), -1f, "DW_Setting_MeleeZOffset_Description".Translate());
 						meleeZOffset = options.Slider(meleeZOffset, -2f, 2f);
 
 						options.Label("DW_Setting_RangedZOffset_Title".Translate("-1", "1", "0", Math.Round(rangedZOffset, 2).ToString()), -1f, "DW_Setting_RangedZOffset_Description".Translate());
@@ -495,5 +505,8 @@ namespace Tacticowl
 		public static Tab selectedTab = Tab.runAndGun;
 		public enum Tab { runAndGun, heavyWeapons, forbiddenWeapons, searchAndDestroy, dualWield, offHands, twoHanders, customRotations, offsets };
 		#endregion
+
+		public static bool VFECoreEnabled;
+        public static Setup.OffHandShield OffHandShield;
 	}
 }

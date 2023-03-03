@@ -6,37 +6,30 @@ using Settings = Tacticowl.ModSettings_Tacticowl;
 
 namespace Tacticowl.DualWield
 {
-    [HarmonyPatch(typeof(VerbProperties), nameof(VerbProperties.AdjustedCooldown))]
-    [HarmonyPatch(new Type[]{typeof(Tool), typeof(Pawn), typeof(Thing)})]
+    [HarmonyPatch(typeof(VerbProperties), nameof(VerbProperties.AdjustedCooldown), new Type[] {typeof(Tool), typeof(Pawn), typeof(Thing)})]
     class Patch_VerbProperties_AdjustedCooldown
     {
         static bool Prepare()
         {
             return Settings.dualWieldEnabled;
         }
-        static void Postfix(VerbProperties __instance, Thing equipment, Pawn attacker, ref float __result)
+        static float Postfix(float __result, VerbProperties __instance, Thing equipment, Pawn attacker)
         {
-            if (attacker != null && attacker.skills != null && __instance.category != VerbCategory.BeatFire)
+            if (attacker != null && attacker.HasOffHand() && __instance.category != VerbCategory.BeatFire)
             {
-                SkillRecord skillRecord = __instance.IsMeleeAttack ? attacker.skills.GetSkill(SkillDefOf.Melee) : attacker.skills.GetSkill(SkillDefOf.Shooting);
-                if (skillRecord == null)
-                {
-                    return;
-                }
-                if (equipment != null && equipment is ThingWithComps twc && twc.IsOffHandedWeapon())
-                {
-                    __result = CalcCooldownPenalty(__result, skillRecord, Settings.staticCooldownPOffHand / 100f);
-                }
-                else if (attacker.equipment != null && attacker.GetOffHander(out ThingWithComps offHandEq))
-                {
-                    __result = CalcCooldownPenalty(__result, skillRecord, Settings.staticCooldownPMainHand / 100f);
-                }
+                int skillLevel;
+                if (attacker.skills == null) skillLevel = 8;
+                else skillLevel = __instance.IsMeleeAttack ? attacker.skills.GetSkill(SkillDefOf.Melee).Level : attacker.skills.GetSkill(SkillDefOf.Shooting).Level;
+                
+                var tmp = CalcCooldownPenalty(__result, skillLevel, (DualWieldExtensions.IsOffHandedWeapon(equipment) ? Settings.staticCooldownPOffHand : Settings.staticCooldownPMainHand) / 100f);
+                return tmp;
             }
+            return __result;
         }
-        static float CalcCooldownPenalty(float __result, SkillRecord skillRecord, float staticPenalty)
+        static float CalcCooldownPenalty(float __result, int skillLevel, float staticPenalty)
         {
             float perLevelPenalty = Settings.dynamicCooldownP / 100f;
-            int levelsShort = 20 - skillRecord.levelInt;
+            int levelsShort = 20 - skillLevel;
             float dynamicPenalty = perLevelPenalty * levelsShort;
             __result *= 1.0f + staticPenalty + dynamicPenalty;
             return __result;

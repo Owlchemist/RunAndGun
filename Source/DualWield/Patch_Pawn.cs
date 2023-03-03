@@ -51,7 +51,7 @@ namespace Tacticowl.DualWield
             //Check if it's an enemy that's attacked, and not a fire or an arguing husband
             if ((!__instance.InMentalState && targ.Thing is not Fire))
             {
-                __instance.TryStartOffHandAttack(targ, ref __result);
+                DualWieldUtility.TryStartOffHandAttack(__instance, targ, ref __result);
             }
         }
     }

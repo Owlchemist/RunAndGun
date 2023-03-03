@@ -35,7 +35,7 @@ namespace Tacticowl.DualWield
                         offHandWeapon = thingWithComps;
                         offHandWeapon.DeSpawn(DestroyMode.Vanish);
                     }
-                    pawn.MakeRoomForOffHand(offHandWeapon);
+                    DualWieldUtility.MakeRoomForOffHand(pawn);
                     pawn.SetOffHander(offHandWeapon);
                     if (thingWithComps.def.soundInteract != null)
                     {

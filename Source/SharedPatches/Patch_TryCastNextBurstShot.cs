@@ -20,10 +20,10 @@ namespace Tacticowl
         public static void SetStanceRunAndGun(Pawn_StanceTracker stanceTracker, Stance_Cooldown stance)
         {
             var stanceVerb = stance.verb;
-            ThingWithComps offHandEquip = stanceVerb.EquipmentSource;
-            if (offHandEquip != null)
+            if (stanceVerb.EquipmentSource != null)
 		    {
                 Pawn pawn = stanceTracker.pawn;
+                bool success = false;
                 if (Settings.dualWieldEnabled && stance.verb.EquipmentSource.IsOffHandedWeapon())
                 {
                     var offhandStance = pawn.GetOffHandStanceTracker();
@@ -32,13 +32,14 @@ namespace Tacticowl
                         offhandStance.SetStance(new Stance_RunAndGun_Cooldown(stance.ticksLeft, stance.focusTarg, stanceVerb));
                     }
                     else offhandStance.SetStance(new Stance_Cooldown(stance.ticksLeft, stance.focusTarg, stance.verb));
-                    return;
+                    success = true;
                 }
-                else if (Settings.runAndGunEnabled && (stanceTracker.curStance is Stance_RunAndGun || stanceTracker.curStance is Stance_RunAndGun_Cooldown) && pawn.pather.Moving)
+                if (Settings.runAndGunEnabled && (stanceTracker.curStance is Stance_RunAndGun || stanceTracker.curStance is Stance_RunAndGun_Cooldown) && pawn.pather.Moving)
                 {
                     stanceTracker.SetStance(new Stance_RunAndGun_Cooldown(stance.ticksLeft, stance.focusTarg, stanceVerb));
-                    return;
+                    success = true;
                 }
+                if (success == true) return;
             }
             stanceTracker.SetStance(stance);
         }

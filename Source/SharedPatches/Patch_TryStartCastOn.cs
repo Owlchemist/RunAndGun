@@ -61,7 +61,7 @@ namespace Tacticowl.DualWield
                 __instance.EquipmentSource != null && !__instance.EquipmentSource.IsOffHandedWeapon() && 
                 __instance.caster is Pawn casterPawn && !casterPawn.InMentalState && castTarg.Thing is not Fire)
             {
-                casterPawn.TryStartOffHandAttack(castTarg, ref __result);
+                DualWieldUtility.TryStartOffHandAttack(casterPawn, castTarg, ref __result);
             }
         }
         
@@ -74,13 +74,14 @@ namespace Tacticowl.DualWield
             if (Settings.runAndGunEnabled && pawn.CurJobDef == JobDefOf.Goto && pawn.RunsAndGuns())
             {
                 var curStance = pawn.stances.curStance;
-                if (curStance is not Stance_RunAndGun && curStance is not Stance_RunAndGun_Cooldown)
+                if (curStance is Stance_RunAndGun_Cooldown) return true;
+                else if (curStance is not Stance_RunAndGun)
                 {
                     pawn.stances.SetStance(new Stance_RunAndGun(ticks, castTarg, verb));
                     return true;
                 }
             }
-            
+
             if (Settings.dualWieldEnabled && verb.EquipmentSource != null && verb.EquipmentSource.IsOffHandedWeapon())
             {
                 pawn.GetOffHandStanceTracker().SetStance(new Stance_Warmup_DW(ticks, castTarg, verb));
