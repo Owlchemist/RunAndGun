@@ -39,7 +39,7 @@
   <RG_Tab_DualWield>雙持</RG_Tab_DualWield>
   <DW_Tab_OffHands>允許副手</DW_Tab_OffHands>
   <DW_Tab_Twohanders>雙手</DW_Tab_Twohanders>
-  <DW_Tab_CustomRotations>自定義輪換</DW_Tab_CustomRotations>
+  <DW_Tab_CustomRotations>自訂角度</DW_Tab_CustomRotations>
   <DW_Tab_Offsets>自訂調整</DW_Tab_Offsets>
 
   <RG_Forbidden_Weapons>這些武器無法移動射擊。</RG_Forbidden_Weapons>
