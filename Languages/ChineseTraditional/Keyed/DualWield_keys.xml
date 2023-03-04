@@ -2,7 +2,7 @@
 <LanguageData>
 
   <DW_Setting_StaticCooldownPenOffHand_Title>副手－ＣＤ減益（默認：{2}% 當前：{3}%）</DW_Setting_StaticCooldownPenOffHand_Title>
-  <DW_Setting_StaticCooldownPenOffHand_Description>雙持時，對副手武器冷卻時間的懲罰。</DW_Setting_StaticCooldownPenOffHand_Description>
+  <DW_Setting_StaticCooldownPenOffHand_Description>雙持時，對副手武器的冷卻時間懲罰。</DW_Setting_StaticCooldownPenOffHand_Description>
 
   <DW_Setting_StaticCooldownPMainHand_Title>主手－ＣＤ減益（默認：{2}% 當前：{3}%）</DW_Setting_StaticCooldownPMainHand_Title>
   <DW_Setting_StaticCooldownPMainHand_Description>雙持時，對主手武器的冷卻時間懲罰。</DW_Setting_StaticCooldownPMainHand_Description>
@@ -20,10 +20,10 @@
   <DW_Setting_DynamicAccP_Description>當雙持武器時，單位的射擊/格鬥等級低於設定時，每少一級就會有額外的命中率懲罰。</DW_Setting_DynamicAccP_Description>
 
 
-  <DW_Setting_MeleeAngle_Title>近戰武器－角度調整 （默認：{2}% 當前：{3}%）</DW_Setting_MeleeAngle_Title>
+  <DW_Setting_MeleeAngle_Title>近戰武器－角度調整（默認：{2}% 當前：{3}%）</DW_Setting_MeleeAngle_Title>
   <DW_Setting_MeleeAngle_Description>單位雙持時，調整近戰武器的貼圖角度</DW_Setting_MeleeAngle_Description>
 
-  <DW_Setting_RangedAngle_Title>遠程武器－角度調整 （默認：{2}% 當前：{3}%）</DW_Setting_RangedAngle_Title>
+  <DW_Setting_RangedAngle_Title>遠程武器－角度調整（默認：{2}% 當前：{3}%）</DW_Setting_RangedAngle_Title>
   <DW_Setting_RangedAngle_Description>單位雙持時，調整遠程武器的貼圖角度</DW_Setting_RangedAngle_Description>
 
   <DW_Setting_MeleeXOffset_Title>近戰武器－水平調整（默認：{2}% 當前：{3}%）</DW_Setting_MeleeXOffset_Title>
@@ -61,7 +61,8 @@
   <DW_CannotBeOffHand>未在模組選項中設為副武器</DW_CannotBeOffHand>
 
   <DW_Twohanders>這些武器需要空出雙手才能操作。</DW_Twohanders>
-  <DW_CustomRotations>單擊任何武器以應用自定義旋轉角度。</DW_CustomRotations>
+  <DW_CustomRotations>勾選武器調整角度。</DW_CustomRotations>
+  <DW_CustomOffsets>自訂武器的貼圖數值。</DW_CustomOffsets>
 
   <DW_EnableDualWield_Title>啟用雙持模塊</DW_EnableDualWield_Title>
   <DW_EnableDualWield_Description>如果禁用，單位將無法雙持武器。</DW_EnableDualWield_Description>
