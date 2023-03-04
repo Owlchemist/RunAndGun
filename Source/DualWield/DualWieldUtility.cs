@@ -71,23 +71,5 @@ namespace Tacticowl.DualWield
             }
             return verb != null;
         }
-        public static void MakeRoomForOffHand(Pawn pawn)
-        {
-            if (!pawn.GetOffHander(out ThingWithComps currentOffHand) && Settings.VFECoreEnabled) currentOffHand = Settings.OffHandShield(pawn);
-            if (currentOffHand != null)
-            {
-                bool success = false;
-                if (currentOffHand is not Apparel)
-                {
-                    success = pawn.equipment.TryDropEquipment(currentOffHand, out currentOffHand, pawn.Position, true);
-                }
-                else if (Settings.VFECoreEnabled && currentOffHand is Apparel apparel)
-                {
-                    success = pawn.apparel.TryDrop(apparel, out apparel, pawn.Position, true);
-                }
-
-                if (!success) Log.Error("[Tacticowl] " + pawn.Label + " couldn't make room for equipment");
-            }
-        }
     }
 }

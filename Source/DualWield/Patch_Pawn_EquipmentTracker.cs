@@ -34,7 +34,7 @@ namespace Tacticowl.DualWield
         static void Postfix(Pawn_EquipmentTracker __instance, ThingOwner<ThingWithComps> ___equipment)
         {
             ThingWithComps primary = __instance.Primary;
-            if (___equipment != null && primary != null && primary.IsOffHandedWeapon())
+            if (___equipment != null && DualWieldExtensions.IsOffHandedWeapon(primary))
             {
                 ___equipment.Remove(primary);
                 __instance.pawn.SetOffHander(primary);   
@@ -60,33 +60,36 @@ namespace Tacticowl.DualWield
         }
         static bool Prefix(Pawn_EquipmentTracker __instance, ThingWithComps eq)
         {
-            bool offHandEquipped = __instance.pawn.GetOffHander(out ThingWithComps offHand);
-            if (offHandEquipped && offHand == __instance.Primary && !eq.def.IsTwoHanded())
-            {
-                return false;
-            }
-            else
-            {
-                if (eq.def.IsTwoHanded() && offHandEquipped)
-                {
-                    DropOffHand(__instance, eq, offHand);
-                    string herHis = __instance.pawn.story.bodyType == BodyTypeDefOf.Male ? "DW_HerHis_Male".Translate() : "DW_HerHis_Female".Translate();
-                    Messages.Message("DW_Message_UnequippedOffHand".Translate(__instance.pawn.Name.ToStringShort, herHis), new LookTargets(__instance.pawn), MessageTypeDefOf.CautionInput);
-                }
-                return true;
-            }
-        }
+            Pawn pawn = __instance.pawn;
+            bool pawnHasOffhand = pawn.HasOffHand();
+            ThingDef def = eq.def;
 
-        static void DropOffHand(Pawn_EquipmentTracker __instance, ThingWithComps eq, ThingWithComps offHand)
-        {
-            if (__instance.TryDropEquipment(offHand, out ThingWithComps resultingEq, __instance.pawn.Position))
+            if (Settings.IsShield(def) && !pawnHasOffhand) return false; //This is a shield and there's no offhand, return false because it was already handled by VEF
+            if ((!pawnHasOffhand && !eq.IsOffHandedWeapon()) || //We don't have an offhand and this is not an offhand. Anything we're equipping can be handled normally
+                (pawnHasOffhand && !eq.IsOffHandedWeapon() && !def.IsTwoHanded() && !Settings.IsShield(def)) //We are dual wielding but swapping out the main hand weapon, it can be swapped normally
+            ) return true;
+
+            if (!pawn.GetOffHander(out ThingWithComps currentOffHand))
             {
-                resultingEq?.SetForbidden(value: false);
+                if (Settings.VFECoreEnabled) currentOffHand = Settings.OffHandShield(pawn);
+                if (currentOffHand != null && !eq.IsOffHandedWeapon() && !def.IsTwoHanded() && !pawn.HasOffHand()) return false; //Don't do anything, VE already handled it and we have nothing to do
             }
-            else
+
+            if (currentOffHand != null)
             {
-                Log.Error(__instance.pawn + " couldn't make room for equipment " + eq);
+                bool success = false;
+                if (currentOffHand is not Apparel)
+                {
+                    success = pawn.equipment.TryDropEquipment(currentOffHand, out currentOffHand, pawn.Position, true);
+                    if (def.IsTwoHanded()) return true; //Need to let the normal removal handle the primary weapon
+                }
+                else if (Settings.VFECoreEnabled && currentOffHand is Apparel apparel)
+                {
+                    success = pawn.apparel.TryDrop(apparel, out apparel, pawn.Position, true);
+                }
+                if (!success) Log.Error("[Tacticowl] " + pawn.Label + " couldn't make room for equipment");
             }
+            return false;
         }
     }
 }

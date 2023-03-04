@@ -20,6 +20,10 @@ namespace Tacticowl
 		{
 			return Settings.twoHandersCache.Contains(def.shortHash);
 		}
+		public static bool HasTwoHander(this Pawn pawn)
+		{
+			return pawn.equipment?.Primary?.def.IsTwoHanded() ?? false;
+		}
 		public static bool CanBeOffHand(this Def def)
 		{
 			return Settings.offHandersCache.Contains(def.shortHash);

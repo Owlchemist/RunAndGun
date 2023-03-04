@@ -28,7 +28,7 @@ namespace Tacticowl.DualWield
         }
         static void Postfix(Pawn_ApparelTracker __instance, Apparel newApparel)
         {
-            if (Settings.OffHandShield(__instance.pawn) != null) DualWieldUtility.MakeRoomForOffHand(__instance.pawn);
+            if (Settings.OffHandShield(__instance.pawn) != null) __instance.pawn.equipment.MakeRoomFor(newApparel);
         }
     }
 }

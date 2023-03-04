@@ -12,6 +12,7 @@ namespace Tacticowl
 	{
 		public static ThingDef[] allWeapons;
 		public delegate ThingWithComps OffHandShield(Pawn pawn);
+		public delegate bool IsShield(ThingDef tDef);
 	
 		static Setup()
 		{
@@ -179,6 +180,8 @@ namespace Tacticowl
 				ModSettings_Tacticowl.OffHandShield = HarmonyLib.AccessTools.MethodDelegate<OffHandShield>(method);
 				VFECoreEnabled = true;
 			}
+			method = HarmonyLib.AccessTools.TypeByName("VFECore.ShieldUtility")?.GetMethod("IsShield", types: new Type[] {typeof(ThingDef)});
+			if (method != null) ModSettings_Tacticowl.IsShield = HarmonyLib.AccessTools.MethodDelegate<IsShield>(method);
 		}
 	}
 	
@@ -508,5 +511,6 @@ namespace Tacticowl
 
 		public static bool VFECoreEnabled;
         public static Setup.OffHandShield OffHandShield;
+		public static Setup.IsShield IsShield;
 	}
 }
