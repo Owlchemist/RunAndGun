@@ -64,9 +64,9 @@ namespace Tacticowl.DualWield
             bool pawnHasOffhand = pawn.HasOffHand();
             ThingDef def = eq.def;
 
-            if (Settings.IsShield(def) && !pawnHasOffhand) return false; //This is a shield and there's no offhand, return false because it was already handled by VEF
+            if (Settings.VFECoreEnabled && Settings.IsShield(def) && !pawnHasOffhand) return false; //This is a shield and there's no offhand, return false because it was already handled by VEF
             if ((!pawnHasOffhand && !eq.IsOffHandedWeapon()) || //We don't have an offhand and this is not an offhand. Anything we're equipping can be handled normally
-                (pawnHasOffhand && !eq.IsOffHandedWeapon() && !def.IsTwoHanded() && !Settings.IsShield(def)) //We are dual wielding but swapping out the main hand weapon, it can be swapped normally
+                (pawnHasOffhand && !eq.IsOffHandedWeapon() && !def.IsTwoHanded() && (!Settings.VFECoreEnabled || !Settings.IsShield(def))) //We are dual wielding but swapping out the main hand weapon, it can be swapped normally
             ) return true;
 
             if (!pawn.GetOffHander(out ThingWithComps currentOffHand))

@@ -22,8 +22,7 @@ namespace Tacticowl.DualWield
                 {
                     facing = target.Thing != null ? (target.Thing.DrawPos - shooter.Position.ToVector3Shifted()).AngleFlat() : (target.Cell - shooter.Position).AngleFlat;
                 }
-                float zOffset = 0f;
-                float xOffset = 0f;
+                float zOffset = 0f, xOffset = 0f;
                 switch (shooter.Rotation.AsInt)
                 {
                     case Rot4.EastInt: zOffset = 0.1f; break;

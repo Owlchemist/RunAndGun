@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using HarmonyLib;
+﻿using HarmonyLib;
 using Verse;
 using Verse.AI;
 using RimWorld;
@@ -22,13 +21,11 @@ namespace Tacticowl
 				return;
 			}
 
-			int ticker = 10;
 			__instance.toils[0].AddPreTickAction(delegate
 			{
 				Pawn pawn = jobDriver.pawn;
-				if (ticker-- == 0)
+				if (Current.gameInt.tickManager.ticksGameInt % 10 == 0)
 				{
-					ticker = 10;
 					if ((pawn.Drafted || ((pawn.Faction == null || !pawn.Faction.def.isPlayer) && Settings.enableForAI) || (pawn.RaceProps.Animal && Settings.enableForAnimals)) && !pawn.Downed && 
 						!pawn.HasAttachment(ThingDefOf.Fire))
 					{

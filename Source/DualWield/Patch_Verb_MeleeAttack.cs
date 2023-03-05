@@ -35,9 +35,9 @@ namespace Tacticowl.DualWield
         }
         public static bool CurrentHandBusy(Pawn_StanceTracker instance, Verb verb)
         {
-            Pawn pawn = instance.pawn;
-            if (verb.EquipmentSource == null || !verb.EquipmentSource.IsOffHandedWeapon()) return pawn.stances.FullBodyBusy;
-            else return !verb.Available() || pawn.GetOffHandStance().StanceBusy;
+            if (instance.stunner.Stunned) return true;
+            if (verb.EquipmentSource.IsOffHandedWeapon()) return !verb.Available() || instance.pawn.GetOffHandStance().StanceBusy;
+            return instance.pawn.stances.curStance.StanceBusy;
         }
     }
 }

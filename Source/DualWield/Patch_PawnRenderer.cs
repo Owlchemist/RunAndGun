@@ -79,7 +79,7 @@ namespace Tacticowl.DualWield
 				//TODO: This all needs to be cleaned up. It's a copy-paste of the PawnRenderer.DrawEquipment math. Probably a better way to do this
 				var num = GetAimingRotation(pawn, focusTarg);
 				float equipmentDrawDistanceFactor = pawn.ageTracker.CurLifeStage.equipmentDrawDistanceFactor;
-				var vector = pawn.DrawPos + new Vector3(0f, 0.1f, 0.4f + pawn.equipment.Primary.def.equippedDistanceOffset).RotatedBy(num) * equipmentDrawDistanceFactor;
+				var vector = pawn.DrawPos + new Vector3(0f, pawn.rotationInt == Rot4.East ? 0.1f : 0f, 0.4f + pawn.equipment.Primary.def.equippedDistanceOffset).RotatedBy(num) * equipmentDrawDistanceFactor;
 				__instance.DrawEquipmentAiming(eq, vector, num);
 			}
 			
