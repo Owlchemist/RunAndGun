@@ -7,31 +7,32 @@ namespace Tacticowl.DualWield
 {
     public static class DualWieldUtility
     {
-        public static void TryStartOffHandAttack(Pawn pawn, LocalTargetInfo targ, ref bool __result)
+        public static bool TryStartOffHandAttack(Pawn pawn, LocalTargetInfo targ, bool __result)
         {
             if (pawn.equipment == null || !pawn.GetOffHander(out ThingWithComps offHandEquip))
             {
-                return;
+                return __result;
             }
             
             var offHandStance = pawn.GetOffHandStance();
             if (offHandStance is Stance_Warmup_DW || offHandStance is Stance_Cooldown || pawn.WorkTagIsDisabled(WorkTags.Violent))
             {
-                return;
+                return __result;
             }
             //Support for JecsTools
             //TODO: look into making making this XML-exposed via mod extensions?
             if (Settings.usingJecsTools && pawn.CurJobDef != null && 
                 (pawn.CurJobDef.driverClass == ResourceBank.CastAbilitySelf.driverClass || pawn.CurJobDef.driverClass == ResourceBank.CastAbilityVerb.driverClass))
             {
-                return;
+                return __result;
             }
 
+            
             if (TryGetOffHandAttackVerb(pawn, targ.Thing, out Verb verb, true))
             {
-                if (__result) return;
-                __result = verb.TryStartCastOn(targ);
+                return verb.TryStartCastOn(targ) || __result;
             }
+            return __result;
         }
         static bool TryGetOffHandAttackVerb(Pawn instance, Thing target, out Verb verb, bool allowManualCastWeapons = false)
         {

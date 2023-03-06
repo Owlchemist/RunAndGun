@@ -34,18 +34,14 @@ namespace Tacticowl.DualWield
         static bool Postfix(bool __result, Pawn_MeleeVerbs __instance, Thing target, Verb verbToUse, bool surpriseAttack)
         {
             Pawn pawn = __instance.pawn;
-            var stance = pawn.GetOffHandStance();
-            if (stance is Stance_Warmup_DW || stance is Stance_Cooldown || 
-                pawn.equipment == null || !pawn.GetOffHander(out ThingWithComps offHandEquip) || 
-                offHandEquip == pawn.equipment.Primary || pawn.InMentalState)
-            {
-                return __result;
-            }
+            if (!pawn.HasOffHand()) return __result;
 
-            if (DualWieldUtility.TryGetMeleeVerbOffHand(__instance.Pawn, target, out Verb verb))
+            var stance = pawn.GetOffHandStance();
+            if (stance is Stance_Warmup_DW || stance is Stance_Cooldown || pawn.InMentalState) return __result;
+
+            if (DualWieldUtility.TryGetMeleeVerbOffHand(pawn, target, out Verb verb))
             {
-                if (__result) return __result;
-                return verb.TryStartCastOn(target);
+                return DualWieldUtility.TryStartOffHandAttack(pawn, target, __result) || __result;
             }
             return __result;
         }

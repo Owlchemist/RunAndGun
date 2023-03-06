@@ -326,7 +326,8 @@ namespace Tacticowl
 
 				options.Label("DW_Setting_DynamicCooldownP_Title".Translate("0", "500", "5", Math.Round(dynamicCooldownP).ToString()), -1f, "DW_Setting_DynamicCooldownP_Description".Translate());
 				dynamicCooldownP = options.Slider(dynamicCooldownP, 0f, 100f);
-				
+
+				if (Prefs.DevMode) options.CheckboxLabeled("Enable debug logging", ref logging);
 				
 				//Record positioning before closing out the lister...
 				Rect weaponsFilterRect = inRect.ContractedBy(15f);

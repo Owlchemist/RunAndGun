@@ -6,7 +6,7 @@ using Verse;
 using Settings = Tacticowl.ModSettings_Tacticowl;
 
 namespace Tacticowl.DualWield
-{
+{ 
     //Tick the stance tracker of the offfhand weapon
     [HarmonyPatch(typeof(Pawn), nameof(Pawn.Tick))]
     class Patch_PawnTick
@@ -35,24 +35,6 @@ namespace Tacticowl.DualWield
         public static void CheckDWStance(Pawn pawn)
         {
             if (pawn.HasOffHand()) pawn.GetOffHandStanceTracker().StanceTrackerTick();
-        }
-    }
-    //Also try start off hand weapons attack when trystartattack is called
-    //Only used by attacking when just standing around, or direct commands
-    [HarmonyPatch(typeof(Pawn), nameof(Pawn.TryStartAttack))]
-    class Patch_Pawn_TryStartAttack
-    {
-        static bool Prepare()
-        {
-            return Settings.dualWieldEnabled;
-        }
-        static void Postfix(Pawn __instance, LocalTargetInfo targ, ref bool __result)
-        {
-            //Check if it's an enemy that's attacked, and not a fire or an arguing husband
-            if ((!__instance.InMentalState && targ.Thing is not Fire))
-            {
-                DualWieldUtility.TryStartOffHandAttack(__instance, targ, ref __result);
-            }
         }
     }
     

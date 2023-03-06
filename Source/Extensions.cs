@@ -7,6 +7,17 @@ namespace Tacticowl
 {
 	static class DualWieldExtensions
 	{
+		public static bool GetTacticowlStorage(this Pawn pawn, out PawnStorage pawnStorage, bool setupIfNeeded = false)
+		{
+			if (!Storage._instance.store.TryGetValue(pawn, out pawnStorage))
+			{
+				if (!setupIfNeeded) return false;
+				if (Settings.logging) Log.Message("[Tacticowl] Setting up extended data for " + pawn.Label);
+				pawnStorage = new PawnStorage();
+				Storage._instance.store.Add(pawn, pawnStorage);
+			}
+			return true;
+		}
 		public static bool IsOffHandedWeapon(this Thing thing)
 		{
 			return Storage._instance.offHands.Contains(thing);
@@ -27,16 +38,6 @@ namespace Tacticowl
 		public static bool CanBeOffHand(this Def def)
 		{
 			return Settings.offHandersCache.Contains(def.shortHash);
-		}
-		public static bool GetTacticowlStorage(this Pawn pawn, out PawnStorage pawnStorage, bool setupIfNeeded = false)
-		{
-			if (!Storage._instance.store.TryGetValue(pawn, out pawnStorage))
-			{
-				if (!setupIfNeeded) return false;
-				pawnStorage = new PawnStorage();
-				Storage._instance.store.Add(pawn, pawnStorage);
-			}
-			return true;
 		}
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool HasOffHand(this Pawn pawn)

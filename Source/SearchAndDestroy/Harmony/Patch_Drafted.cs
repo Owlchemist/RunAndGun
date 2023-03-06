@@ -4,12 +4,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using Verse;
 using Verse.AI;
+using Settings = Tacticowl.ModSettings_Tacticowl;
 
 namespace Tacticowl
 {
 	[HarmonyPatch(typeof(Pawn_DraftController), nameof(Pawn_DraftController.Drafted), MethodType.Setter)]
 	class Patch_Drafted
 	{
+		static bool Prepare()
+		{
+			return Settings.searchAndDestroyEnabled;
+		}
 		static void Postfix(Pawn_DraftController __instance)
 		{
 			if (!__instance.Drafted) __instance.pawn.SetSearchAndDestroy(false);
@@ -19,6 +24,10 @@ namespace Tacticowl
 	[HarmonyPatch(typeof(Pawn_DraftController), nameof(Pawn_DraftController.GetGizmos))]
 	class Patch_GetGizmos
 	{
+		static bool Prepare()
+		{
+			return Settings.searchAndDestroyEnabled;
+		}
 		static IEnumerable<Gizmo> Postfix(IEnumerable<Gizmo> values, Pawn_DraftController __instance)
 		{
 			foreach (var item in values) yield return item;
@@ -37,7 +46,7 @@ namespace Tacticowl
 				}
 			}
 		}
-
+		//Used by MP
 		static Gizmo CreateGizmo_SearchAndDestroy_Melee(Pawn pawn)
 		{			
 			string disabledReason;
@@ -70,6 +79,7 @@ namespace Tacticowl
 			};
 			return gizmo;
 		}
+		//Used by MP
 		static Gizmo CreateGizmo_SearchAndDestroy_Ranged(Pawn pawn)
 		{
 			string disabledReason;

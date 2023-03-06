@@ -1,12 +1,17 @@
 ﻿using HarmonyLib;
 using Verse;
 using Verse.AI;
+using Settings = Tacticowl.ModSettings_Tacticowl;
 
 namespace Tacticowl
 {
 	[HarmonyPatch(typeof(Pawn_JobTracker), nameof(Pawn_JobTracker.DetermineNextJob))]
 	class Patch_DetermineNextJob
 	{
+		static bool Prepare()
+		{
+			return Settings.searchAndDestroyEnabled;
+		}
 		static void Postfix(Pawn_JobTracker __instance, ref ThinkResult __result)
 		{
 			Pawn pawn = __instance.pawn;

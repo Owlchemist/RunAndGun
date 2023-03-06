@@ -16,6 +16,7 @@ namespace Tacticowl.DualWield
         {
             return Settings.runAndGunEnabled || Settings.dualWieldEnabled;
         }
+        
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
         {
             var label = generator.DefineLabel();
@@ -52,16 +53,14 @@ namespace Tacticowl.DualWield
             if (!found) Log.Error("[Tacticowl] Patch_TryStartCastOn transpiler failed to find its target. Did RimWorld update?");
         }
 
-        
-        static void Postfix(Verb __instance, LocalTargetInfo castTarg, ref bool __result)
+        static void Postfix(ref bool __result, Verb __instance, LocalTargetInfo castTarg)
         {
             //Check if it's an enemy that's attacked, and not a fire or an arguing husband
-            //TODO: optimize this, this should be gated
-            if (Settings.dualWieldEnabled && 
-                __instance.EquipmentSource != null && !__instance.EquipmentSource.IsOffHandedWeapon() && 
+            //TODO: this could probably be transpiled in somehow
+            if (Settings.dualWieldEnabled && !__instance.EquipmentSource.IsOffHandedWeapon() && 
                 __instance.caster is Pawn casterPawn && !casterPawn.InMentalState && castTarg.Thing is not Fire)
             {
-                DualWieldUtility.TryStartOffHandAttack(casterPawn, castTarg, ref __result);
+                __result = DualWieldUtility.TryStartOffHandAttack(casterPawn, castTarg, __result);
             }
         }
         
@@ -82,7 +81,7 @@ namespace Tacticowl.DualWield
                 }
             }
 
-            if (Settings.dualWieldEnabled && verb.EquipmentSource != null && verb.EquipmentSource.IsOffHandedWeapon())
+            if (Settings.dualWieldEnabled && verb.EquipmentSource.IsOffHandedWeapon())
             {
                 pawn.GetOffHandStanceTracker().SetStance(new Stance_Warmup_DW(ticks, castTarg, verb));
                 return true;

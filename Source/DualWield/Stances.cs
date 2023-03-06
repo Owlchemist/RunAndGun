@@ -10,6 +10,7 @@ namespace Tacticowl.DualWield
             get { return true; }
         }
         public Stance_Warmup_DW() { }
+
         public Stance_Warmup_DW(int ticks, LocalTargetInfo focusTarg, Verb verb) : base(ticks, focusTarg, verb) { }
         public override void StanceDraw()
         {

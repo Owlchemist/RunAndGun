@@ -15,14 +15,24 @@ namespace Tacticowl
         {
             return Settings.runAndGunEnabled;
         }
+        //Used by MP
         static IEnumerable<Gizmo> Postfix(IEnumerable<Gizmo> values, Pawn __instance)
         {
             foreach (var gizmo in values) yield return gizmo;
-            if (__instance == null || !__instance.Drafted || !__instance.Faction.def.isPlayer || !(__instance.equipment?.Primary?.def.IsWeaponUsingProjectiles ?? true)
-                 || values == null || !values.Any() || Settings.forbiddenWeaponsCache.Contains(__instance.equipment?.Primary?.def.shortHash ?? 0))
+            if (!__instance.Drafted || !__instance.Faction.def.isPlayer || values.EnumerableNullOrEmpty())
             {
                 yield break;
             }
+
+            //Check if weapons are valid
+            var mainWeapon = __instance.equipment?.Primary;
+            __instance.GetOffHander(out ThingWithComps offHandWeapon);
+            var hasProjectileWeapon = (mainWeapon != null && mainWeapon.def.IsWeaponUsingProjectiles) || (offHandWeapon != null && offHandWeapon.def.IsWeaponUsingProjectiles);
+            if (!hasProjectileWeapon) yield break;
+
+            //Check if weapons are allowed
+            bool forbiddendWeapon = Settings.forbiddenWeaponsCache.Contains(mainWeapon?.def.shortHash ?? 0) || Settings.forbiddenWeaponsCache.Contains(offHandWeapon?.def.shortHash ?? 0);
+            if (forbiddendWeapon) yield break;
 
             bool isEnabled = __instance.RunsAndGuns();
 
