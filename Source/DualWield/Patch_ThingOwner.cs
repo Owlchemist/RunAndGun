@@ -12,10 +12,18 @@ namespace Tacticowl.DualWield
         {
             return Settings.dualWieldEnabled;
         }
+        static void Prefix(Pawn_EquipmentTracker __instance, ThingWithComps eq)
+        {
+            Pawn pawn = __instance.pawn;
+            if (__instance.Primary == eq && !eq.IsOffHandedWeapon() && pawn.GetOffHander(out ThingWithComps offHander))
+            {
+                pawn.equipment.TryDropEquipment(offHander, out offHander, pawn.Position, true);
+            }
+        }
         static void Postfix(Pawn_EquipmentTracker __instance, ThingWithComps eq, bool __result)
         {
             if (!__result) return;
-            if (eq.IsOffHandedWeapon()) __instance.pawn.SetOffHander(eq, true);
+            if (eq.IsOffHandedWeapon()) __instance.pawn.SetOffHander(eq, removing: true);
         }
     }
     //This is just to patch support for other mods' use of an offhand

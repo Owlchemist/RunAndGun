@@ -16,7 +16,7 @@ namespace Tacticowl
         }
 		static void Postfix(JobDriver __instance)
 		{
-			if (__instance is not JobDriver_Goto jobDriver || !__instance.pawn.RunsAndGuns() || __instance.toils.Count == 0 || jobDriver.pawn == null)
+			if (__instance is not JobDriver_Goto jobDriver || jobDriver.pawn == null || !jobDriver.pawn.RunsAndGuns() || __instance.toils.Count == 0)
 			{
 				return;
 			}

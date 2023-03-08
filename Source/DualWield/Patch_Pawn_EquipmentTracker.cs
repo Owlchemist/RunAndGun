@@ -7,8 +7,39 @@ using Settings = Tacticowl.ModSettings_Tacticowl;
 
 namespace Tacticowl.DualWield
 {
+    /*[HarmonyPatch(typeof(Pawn_EquipmentTracker), nameof(Pawn_EquipmentTracker.Primary), MethodType.Getter)]
+    class Patch_Pawn_EquipmentTracker_Primary
+    {
+        static bool Prepare()
+        {
+            return Settings.dualWieldEnabled;
+        }
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            bool found = false;
+            foreach (var instruction in instructions)
+            {
+                yield return instruction;
+                if (instruction.opcode == OpCodes.Bne_Un_S)
+                {
+                    found = true;
+                    Label label = (Label)instruction.operand;
+
+                    yield return new CodeInstruction(OpCodes.Ldarg_0);
+                    yield return new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(Pawn_EquipmentTracker), nameof(Pawn_EquipmentTracker.equipment)));
+                    yield return new CodeInstruction(OpCodes.Ldloc_0);
+                    yield return new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(ThingOwner), ("get_Item")));
+                    yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(DualWieldExtensions), nameof(DualWieldExtensions.IsOffHandedWeapon)));
+                    yield return new CodeInstruction(OpCodes.Brtrue, label);
+                }
+            }
+            if (!found) Log.Error("[Tacticowl] Patch_Pawn_EquipmentTracker_Primary transpiler failed to find its target. Did RimWorld update?");
+        }
+    }*/
+    
     //This patch prevent an error thrown when a offHand weapon is equipped and the primary weapon is switched. 
     [HarmonyPatch(typeof(Pawn_EquipmentTracker), nameof(Pawn_EquipmentTracker.AddEquipment))]
+    [HarmonyPriority(Priority.Last)]
     class Patch_Pawn_EquipmentTracker_AddEquipment
     {
         static bool Prepare()
@@ -31,24 +62,18 @@ namespace Tacticowl.DualWield
             if (!found) Log.Error("[Tacticowl] Patch_Pawn_EquipmentTracker_AddEquipment transpiler failed to find its target. Did RimWorld update?");
         }
         //Make sure offHand weapons are never stored first in the list. 
-        static void Postfix(Pawn_EquipmentTracker __instance, ThingOwner<ThingWithComps> ___equipment)
+        static void Postfix(Pawn_EquipmentTracker __instance)
         {
             ThingWithComps primary = __instance.Primary;
-            if (___equipment != null && DualWieldExtensions.IsOffHandedWeapon(primary))
+            if (primary.IsOffHandedWeapon())
             {
-                ___equipment.Remove(primary);
+                __instance.equipment.Remove(primary);
                 __instance.pawn.SetOffHander(primary);   
             }
         }
         public static ThingWithComps PrimaryNoOffHand(Pawn_EquipmentTracker instance)
         {
-            ThingWithComps result = null;
-            //When there's no offHand weapon equipped, use vanilla behaviour and throw the error when needed. Otherwise, make sure the error is never thrown. 
-            if (!instance.pawn.GetOffHander(out ThingWithComps r))
-            {
-                return instance.Primary;
-            }
-            return result;
+            return instance.pawn.HasOffHand() ? null : instance.Primary;
         }
     }
     [HarmonyPatch(typeof(Pawn_EquipmentTracker), nameof(Pawn_EquipmentTracker.MakeRoomFor))]

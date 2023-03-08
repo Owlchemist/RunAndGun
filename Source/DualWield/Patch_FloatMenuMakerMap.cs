@@ -47,37 +47,41 @@ namespace Tacticowl.DualWield
         static FloatMenuOption GetEquipOffHandOption(Pawn pawn, ThingWithComps equipment)
         {
             string labelShort = equipment.LabelShort;
-            string cannotEquipText = "CannotEquip".Translate(labelShort) + " ";
+            string cannotEquipText = "CannotEquip".Translate(labelShort);
 
+            if (!equipment.def.CanBeOffHand())
+                return new FloatMenuOption("DW_AsOffHand".Translate(cannotEquipText, "DW_CannotBeOffHand".Translate()), null);
+
+            if (equipment.def.IsTwoHanded())
+                return new FloatMenuOption("DW_AsOffHand".Translate(cannotEquipText, "DW_NoTwoHandedInOffHand".Translate()), null);
+
+            if (pawn.equipment != null && pawn.equipment.Primary != null)
+            {
+                if (pawn.equipment.Primary.def.IsTwoHanded())
+                    return new FloatMenuOption("DW_AsOffHand".Translate(cannotEquipText, "DW_WieldingTwoHanded".Translate()), null);
+            }
+            else return new FloatMenuOption("DW_AsOffHand".Translate(cannotEquipText, "DW_MissingPrimary".Translate()), null);
+            
             if (equipment.def.IsWeapon && pawn.WorkTagIsDisabled(WorkTags.Violent))
-                return new FloatMenuOption(cannotEquipText + "DW_AsOffHand".Translate() + " (" + "IsIncapableOfViolenceLower".Translate(pawn.LabelShort, pawn) + ")", null);
+                return new FloatMenuOption("DW_AsOffHand".Translate(cannotEquipText, "IsIncapableOfViolenceLower".Translate(pawn.LabelShort, pawn)), null);
             
             if (!pawn.CanReach(equipment, PathEndMode.ClosestTouch, Danger.Deadly, false,  false, TraverseMode.ByPawn))
-                return new FloatMenuOption(cannotEquipText + "DW_AsOffHand".Translate() + " (" + "NoPath".Translate() + ")", null);
+                return new FloatMenuOption("DW_AsOffHand".Translate(cannotEquipText, "NoPath".Translate()), null);
             
             if (!pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation))
-                return new FloatMenuOption(cannotEquipText + "DW_AsOffHand".Translate() + " (" + "Incapable".Translate() + ")", null);
+                return new FloatMenuOption("DW_AsOffHand".Translate(cannotEquipText, "Incapable".Translate()), null);
             
             if (equipment.IsBurning())
-                return new FloatMenuOption(cannotEquipText + "DW_AsOffHand".Translate() + " (" + "BurningLower".Translate() + ")", null);
+                return new FloatMenuOption("DW_AsOffHand".Translate(cannotEquipText, "BurningLower".Translate()), null);
             
             if (pawn.HasMissingArmOrHand())
-                return new FloatMenuOption(cannotEquipText + "DW_AsOffHand".Translate() + " ( " +"DW_MissArmOrHand".Translate() + " )", null);
-            
-            if (pawn.equipment != null && pawn.equipment.Primary != null && pawn.equipment.Primary.def.IsTwoHanded())
-                return new FloatMenuOption(cannotEquipText + "DW_AsOffHand".Translate() + " ( " + "DW_WieldingTwoHanded".Translate() + ")", null);
-            
-            if (equipment.def.IsTwoHanded())
-                return new FloatMenuOption(cannotEquipText + "DW_AsOffHand".Translate() + " ( " + "DW_NoTwoHandedInOffHand".Translate() + ")", null);
-            
-            if (!equipment.def.CanBeOffHand())
-                return new FloatMenuOption(cannotEquipText + "DW_AsOffHand".Translate() + " ( " + "DW_CannotBeOffHand".Translate() + ")", null);
+                return new FloatMenuOption("DW_AsOffHand".Translate(cannotEquipText, "DW_MissArmOrHand".Translate()), null);
             
             
             string text = "DW_EquipOffHand".Translate(labelShort);
             if (equipment.def.IsRangedWeapon && pawn.story != null && pawn.story.traits.HasTrait(TraitDefOf.Brawler))
             {
-                text += " " + "EquipWarningBrawler".Translate();
+                text += "EquipWarningBrawler".Translate();
             }
             return FloatMenuUtility.DecoratePrioritizedTask(new FloatMenuOption(text, delegate
             {
