@@ -57,6 +57,7 @@
   <DW_AsOffHand>作為副手武器</DW_AsOffHand>
   <DW_MissArmOrHand>手部/手臂殘缺</DW_MissArmOrHand>
   <DW_WieldingTwoHanded>裝備雙手武器</DW_WieldingTwoHanded>
+  <DW_MissingPrimary>缺少主武器</DW_MissingPrimary>
   <DW_NoTwoHandedInOffHand>需要雙手才能操作</DW_NoTwoHandedInOffHand>
   <DW_CannotBeOffHand>未在模組選項中設為副武器</DW_CannotBeOffHand>
 
