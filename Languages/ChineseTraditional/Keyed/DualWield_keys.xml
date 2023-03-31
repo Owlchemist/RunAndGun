@@ -1,41 +1,41 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
 
-  <DW_Setting_StaticCooldownPenOffHand_Title>副手－ＣＤ減益（默認：{2}% 當前：{3}%）</DW_Setting_StaticCooldownPenOffHand_Title>
+  <DW_Setting_StaticCooldownPenOffHand_Title>副手－ＣＤ（默認：{2}% 當前：{3}%）</DW_Setting_StaticCooldownPenOffHand_Title>
   <DW_Setting_StaticCooldownPenOffHand_Description>雙持時，對副手武器的冷卻時間懲罰。</DW_Setting_StaticCooldownPenOffHand_Description>
 
-  <DW_Setting_StaticCooldownPMainHand_Title>主手－ＣＤ減益（默認：{2}% 當前：{3}%）</DW_Setting_StaticCooldownPMainHand_Title>
+  <DW_Setting_StaticCooldownPMainHand_Title>主手－ＣＤ（默認：{2}% 當前：{3}%）</DW_Setting_StaticCooldownPMainHand_Title>
   <DW_Setting_StaticCooldownPMainHand_Description>雙持時，對主手武器的冷卻時間懲罰。</DW_Setting_StaticCooldownPMainHand_Description>
 
-  <DW_Setting_StaticAccPOffHand_Title>副手－ＨＩＴ減益（默認：{2}% 當前：{3}%）</DW_Setting_StaticAccPOffHand_Title>
+  <DW_Setting_StaticAccPOffHand_Title>副手－ＨＩＴ（默認：{2}% 當前：{3}%）</DW_Setting_StaticAccPOffHand_Title>
   <DW_Setting_StaticAccPOffHand_Description>雙持時，對副手武器的命中率懲罰。</DW_Setting_StaticAccPOffHand_Description>
 
-  <DW_Setting_StaticAccPMainHand_Title>主手－ＨＩＴ減益（默認：{2}% 當前：{3}%）</DW_Setting_StaticAccPMainHand_Title>
+  <DW_Setting_StaticAccPMainHand_Title>主手－ＨＩＴ（默認：{2}% 當前：{3}%）</DW_Setting_StaticAccPMainHand_Title>
   <DW_Setting_StaticAccPMainHand_Description>雙持時，對主手武器的命中率懲罰。</DW_Setting_StaticAccPMainHand_Description>
 
-  <DW_Setting_DynamicCooldownP_Title>技能等級－ＣＤ減益（默認：{2}% 當前：{3}%）</DW_Setting_DynamicCooldownP_Title>
+  <DW_Setting_DynamicCooldownP_Title>技能等級－ＣＤ（默認：{2}% 當前：{3}%）</DW_Setting_DynamicCooldownP_Title>
   <DW_Setting_DynamicCooldownP_Description>當雙持武器時，單位的射擊/格鬥等級低於設定時，每少一級就會有額外的冷卻時間懲罰。</DW_Setting_DynamicCooldownP_Description>
 
-  <DW_Setting_DynamicAccP_Title>技能等級－ＨＩＴ減益 （默認：{2}% 當前：{3}%）</DW_Setting_DynamicAccP_Title>
+  <DW_Setting_DynamicAccP_Title>技能等級－ＨＩＴ （默認：{2}% 當前：{3}%）</DW_Setting_DynamicAccP_Title>
   <DW_Setting_DynamicAccP_Description>當雙持武器時，單位的射擊/格鬥等級低於設定時，每少一級就會有額外的命中率懲罰。</DW_Setting_DynamicAccP_Description>
 
 
-  <DW_Setting_MeleeAngle_Title>近戰武器－角度調整（默認：{2}% 當前：{3}%）</DW_Setting_MeleeAngle_Title>
+  <DW_Setting_MeleeAngle_Title>近戰武器－角度（默認：{2}% 當前：{3}%）</DW_Setting_MeleeAngle_Title>
   <DW_Setting_MeleeAngle_Description>單位雙持時，調整近戰武器的貼圖角度</DW_Setting_MeleeAngle_Description>
 
-  <DW_Setting_RangedAngle_Title>遠程武器－角度調整（默認：{2}% 當前：{3}%）</DW_Setting_RangedAngle_Title>
+  <DW_Setting_RangedAngle_Title>遠程武器－角度（默認：{2}% 當前：{3}%）</DW_Setting_RangedAngle_Title>
   <DW_Setting_RangedAngle_Description>單位雙持時，調整遠程武器的貼圖角度</DW_Setting_RangedAngle_Description>
 
-  <DW_Setting_MeleeXOffset_Title>近戰武器－水平調整（默認：{2}% 當前：{3}%）</DW_Setting_MeleeXOffset_Title>
+  <DW_Setting_MeleeXOffset_Title>近戰武器－水平（默認：{2}% 當前：{3}%）</DW_Setting_MeleeXOffset_Title>
   <DW_Setting_MeleeXOffset_Description>雙持時，以單位為中心調整近戰武器的貼圖水平。</DW_Setting_MeleeXOffset_Description>
 
-  <DW_Setting_RangedXOffset_Title>遠程武器－水平調整（默認：{2}% 當前：{3}%）</DW_Setting_RangedXOffset_Title>
+  <DW_Setting_RangedXOffset_Title>遠程武器－水平（默認：{2}% 當前：{3}%）</DW_Setting_RangedXOffset_Title>
   <DW_Setting_RangedXOffset_Description>雙持時，以單位為中心調整遠程武器的貼圖水平。</DW_Setting_RangedXOffset_Description>
 
-  <DW_Setting_MeleeZOffset_Title>近戰武器－垂直調整（默認：{2}% 當前：{3}%）</DW_Setting_MeleeZOffset_Title>
+  <DW_Setting_MeleeZOffset_Title>近戰武器－垂直（默認：{2}% 當前：{3}%）</DW_Setting_MeleeZOffset_Title>
   <DW_Setting_MeleeZOffset_Description>雙持時，以單位為中心調整近戰武器的貼圖垂直。</DW_Setting_MeleeZOffset_Description>
 
-  <DW_Setting_RangedZOffset_Title>遠程武器－垂直調整（默認：{2}% 當前：{3}%）</DW_Setting_RangedZOffset_Title>
+  <DW_Setting_RangedZOffset_Title>遠程武器－垂直（默認：{2}% 當前：{3}%）</DW_Setting_RangedZOffset_Title>
   <DW_Setting_RangedZOffset_Description>雙持時，以單位為中心調整遠程武器的貼圖垂直</DW_Setting_RangedZOffset_Description>
 
   <DW_Setting_MeleeMirrored_Title>近戰武器－鏡像</DW_Setting_MeleeMirrored_Title>
@@ -49,7 +49,7 @@
   <DW_Setting_NPCDualWieldChance_Title>NPC/敵人－雙持機率 （默認：{2}% 當前：{3}%）</DW_Setting_NPCDualWieldChance_Title>
   <DW_Setting_NPCDualWieldChance_Description>一定機率下NPC（敵人或友軍）會雙持武器，前提是沒有使用雙手武器。</DW_Setting_NPCDualWieldChance_Description>
 
-  <DW_Message_UnequippedOffHand>{0} 卸下 {1} 個副手武器，為雙手武器騰出空間。</DW_Message_UnequippedOffHand>
+  <DW_Message_UnequippedOffHand>{0}卸下{1}個副手武器，為雙手武器騰出空間。</DW_Message_UnequippedOffHand>
   <DW_HerHis_Male>他的</DW_HerHis_Male>
   <DW_HerHis_Female>她的</DW_HerHis_Female>
   <DW_EquipOffHand>裝備 {0} (副手)</DW_EquipOffHand>
@@ -57,7 +57,8 @@
   <DW_AsOffHand>作為副手武器</DW_AsOffHand>
   <DW_MissArmOrHand>手部/手臂殘缺</DW_MissArmOrHand>
   <DW_WieldingTwoHanded>裝備雙手武器</DW_WieldingTwoHanded>
-  <DW_NoTwoHandedInOffHand>需要雙手才能操作</DW_NoTwoHandedInOffHand>
+  <DW_MissingPrimary>需先裝備主武器</DW_MissingPrimary>
+  <DW_NoTwoHandedInOffHand>雙手才能操作</DW_NoTwoHandedInOffHand>
   <DW_CannotBeOffHand>未在模組選項中設為副武器</DW_CannotBeOffHand>
 
   <DW_Twohanders>這些武器需要空出雙手才能操作。</DW_Twohanders>
