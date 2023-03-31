@@ -1,18 +1,19 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
+  
   <RG_EnableRGForAI_Title>允許AI移動射擊</RG_EnableRGForAI_Title>
   <RG_EnableRGForAI_Description>允許AI像玩家一樣移動射擊。</RG_EnableRGForAI_Description>
 
   <RG_EnableRGForAnimals_Title>允許動物移動射擊</RG_EnableRGForAnimals_Title>
   <RG_EnableRGForAnimals_Description>允許動物移動射擊。此選項適用於添加可以射擊的動物或可徵召動物的模組。</RG_EnableRGForAnimals_Description>
 
-  <RG_AccuracyPenalty_Title>命中率修改（默認：{2}% 當前：{3}%）</RG_AccuracyPenalty_Title>
-  <RG_AccuracyPenalty_Description>AI控制單位在奔跑和射擊時的命中率會按此百分比進行修改。</RG_AccuracyPenalty_Description>
+  <RG_AccuracyPenalty_Title>命中率（默認：{2}% 當前：{3}%）</RG_AccuracyPenalty_Title>
+  <RG_AccuracyPenalty_Description>AI控制單位在奔跑射擊時的命中率會按此百分比進行修改。</RG_AccuracyPenalty_Description>
 
-  <RG_AccuracyPenaltyPlayer_Title>玩家－命中率修改（默認：{2}% 當前：{3}%）</RG_AccuracyPenaltyPlayer_Title>
+  <RG_AccuracyPenaltyPlayer_Title>玩家－命中率（默認：{2}% 當前：{3}%）</RG_AccuracyPenaltyPlayer_Title>
   <RG_AccuracyPenaltyPlayer_Description>玩家單位的命中率修改。例如，如果您想讓敵人使用此功能，則兩個獨立的滑塊會造成障礙，反之亦然。</RG_AccuracyPenaltyPlayer_Description>
 
-  <RG_AccuracyPenaltyMechs_Title>機械－命中率修改（默認：{2}% 當前：{3}%）</RG_AccuracyPenaltyMechs_Title>
+  <RG_AccuracyPenaltyMechs_Title>機械－命中率（默認：{2}% 當前：{3}%）</RG_AccuracyPenaltyMechs_Title>
   <RG_AccuracyPenaltyMechs_Description>機械的命中率修改。</RG_AccuracyPenaltyMechs_Description>
 
   <RG_MovementPenaltyHeavy_Title>重型武器－移速減益（默認：{2}% 當前：{3}%）</RG_MovementPenaltyHeavy_Title>
