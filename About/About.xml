@@ -5,7 +5,7 @@
 	<supportedVersions>
 		<li>1.4</li>
 	</supportedVersions>
-	<modVersion>2.0.15</modVersion>
+	<modVersion>2.0.22</modVersion>
 	<packageId>Owlchemist.Tacticowl</packageId>
 	<modDependencies>
 		<li>
