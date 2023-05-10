@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
-  
+  <RG_Tab_HeavyWeapons>武器重量</RG_Tab_HeavyWeapons>
+  <RG_Tab_ForbiddenWeapons>禁用武器</RG_Tab_ForbiddenWeapons>
+
   <RG_EnableRGForAI_Title>允許AI移動射擊</RG_EnableRGForAI_Title>
   <RG_EnableRGForAI_Description>允許AI像玩家一樣移動射擊。</RG_EnableRGForAI_Description>
 
@@ -29,19 +31,9 @@
   <RG_WeightLimitFilter_Description>使用滑塊設置過濾器的重量限制。</RG_WeightLimitFilter_Description>
 
   <RG_Action_Enable_Label>移動射擊</RG_Action_Enable_Label>
-  <RG_Action_Disable_Label>禁用移動射擊</RG_Action_Disable_Label>
+  <RG_Action_Disable_Label>禁用</RG_Action_Disable_Label>
   <RG_Action_Disable_Description>禁止移動射擊</RG_Action_Disable_Description>
   <RG_Action_Enable_Description>啟用移動射擊。邊跑邊射擊會使命中率跟移速減損。</RG_Action_Enable_Description>
-
-  <RG_Tab_RunAndGun>移動射擊</RG_Tab_RunAndGun>
-  <RG_Tab_SearchAndDestroy>搜敵殲滅</RG_Tab_SearchAndDestroy>
-  <RG_Tab_HeavyWeapons>武器重量</RG_Tab_HeavyWeapons>
-  <RG_Tab_ForbiddenWeapons>禁用武器</RG_Tab_ForbiddenWeapons>
-  <RG_Tab_DualWield>雙持</RG_Tab_DualWield>
-  <DW_Tab_OffHands>允許副手</DW_Tab_OffHands>
-  <DW_Tab_Twohanders>雙手</DW_Tab_Twohanders>
-  <DW_Tab_CustomRotations>自訂角度</DW_Tab_CustomRotations>
-  <DW_Tab_Offsets>自訂調整</DW_Tab_Offsets>
 
   <RG_Forbidden_Weapons>這些武器無法移動射擊。</RG_Forbidden_Weapons>
 

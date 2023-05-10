@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <Tab_RunAndGun>移動射擊</Tab_RunAndGun>
+  <Tab_SearchAndDestroy>搜敵殲滅</Tab_SearchAndDestroy>
+  <Tab_DualWield>雙持</Tab_DualWield>
+  <Tab_Misc>其他</Tab_Misc>
+
+  <Misc_Setting_ProjectileSpeedMulti_Title>彈藥速度倍率（預設：{0} 當前：{1}）</Misc_Setting_ProjectileSpeedMulti_Title>
+  <Misc_Setting_ProjectileSpeedMulti_Description>例:設定值2時，將使彈藥（子彈、火箭等）的速度加快一倍。\n\n建議值在1.5和2.5之間。</Misc_Setting_ProjectileSpeedMulti_Description>
+
+</LanguageData>
