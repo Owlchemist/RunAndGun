@@ -1,23 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ModMetaData>
-	<name>Tacticowl (temporary beta)</name>
-	<author>Roolo, Owlchemist</author>
-	<supportedVersions>
-		<li>1.4</li>
-	</supportedVersions>
-	<modVersion>2.0.22</modVersion>
-	<packageId>Owlchemist.Tacticowl</packageId>
-	<modDependencies>
-		<li>
-			<packageId>brrainz.harmony</packageId>
-			<displayName>Harmony</displayName>
-			<steamWorkshopUrl>steam://url/CommunityFilePage/2009463077</steamWorkshopUrl>
-		</li>
-	</modDependencies>
-	<description>This is a continuation, overhaul and merging of Roolo's three combat mods - "RunAndGun", "Search and Destroy", and "Dual Wield".</description>
-	<incompatibleWith>
-		<li>roolo.searchanddestroy</li>
-		<li>roolo.runandgun</li>
-		<li>roolo.dualwield</li>
-	</incompatibleWith>
+    <name>Tacticowl (temporary beta)</name>
+    <author>Roolo, Owlchemist, et al.</author>
+    <supportedVersions>
+        <li>1.4</li>
+        <li>1.5</li>
+    </supportedVersions>
+    <modVersion>2.0.23</modVersion>
+    <packageId>Owlchemist.Tacticowl2</packageId>
+    <modDependencies>
+        <li>
+            <packageId>brrainz.harmony</packageId>
+            <displayName>Harmony</displayName>
+            <steamWorkshopUrl>steam://url/CommunityFilePage/2009463077</steamWorkshopUrl>
+        </li>
+    </modDependencies>
+    <description>This is a continuation, overhaul and merging of Roolo's three combat mods - "RunAndGun", "Search and Destroy", and "Dual Wield".</description>
+    <incompatibleWith>
+        <li>roolo.searchanddestroy</li>
+        <li>roolo.runandgun</li>
+        <li>roolo.dualwield</li>
+    </incompatibleWith>
 </ModMetaData>
+

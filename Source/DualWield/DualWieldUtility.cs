@@ -62,7 +62,7 @@ namespace Tacticowl.DualWield
                     for (int k = allVerbs.Count; k-- > 0;)
                     {
                         Verb v = allVerbs[k];
-                        if (v.IsStillUsableBy(instance)) usableVerbs.Add(new VerbEntry(v, instance));
+                        if (v.IsStillUsableBy(instance)) usableVerbs.Add(new VerbEntry(v, instance, allVerbs, 1));
                     }
                     if (usableVerbs.TryRandomElementByWeight(ve => ve.GetSelectionWeight(target), out VerbEntry result))
                     {
