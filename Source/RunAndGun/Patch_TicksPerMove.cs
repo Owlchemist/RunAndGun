@@ -12,7 +12,7 @@ namespace Tacticowl
         {
             return Settings.runAndGunEnabled;
         }
-        static int Postfix(int __result, Pawn __instance)
+        static float Postfix(float __result, Pawn __instance)
         {
             if (__instance == null || __instance.stances == null)
             {
@@ -23,7 +23,7 @@ namespace Tacticowl
             {   
                 float factor = Settings.heavyWeaponsCache.Contains(__instance.equipment?.Primary?.def.shortHash ?? 0)
                      ? Settings.movementModifierHeavy : Settings.movementModifierLight;
-                return (int)Math.Floor((float)__result / factor);
+                return (int)Math.Floor(__result / factor);
             }
             return __result;
         }
