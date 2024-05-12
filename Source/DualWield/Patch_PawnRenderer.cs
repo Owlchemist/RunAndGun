@@ -4,7 +4,6 @@ using Verse;
 using RimWorld;
 using System.Collections.Generic;
 using System.Reflection.Emit;
-using JetBrains.Annotations;
 using Settings = Tacticowl.ModSettings_Tacticowl;
 
 namespace Tacticowl.DualWield
@@ -14,7 +13,6 @@ namespace Tacticowl.DualWield
 	{
 		static bool Prepare()
 		{
-			Harmony.DEBUG = true;
 			return Settings.dualWieldEnabled;
 		}
 		static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
@@ -55,13 +53,13 @@ namespace Tacticowl.DualWield
             bool new_call = false;
             foreach (var instruction in new_instructions)
             {
-	            Log.Message("[Tacticowl] Found New Call and Adding Pawn to Stack...");
 	            new_call = instruction.Calls(
 		            AccessTools.Method(typeof(Patch_PawnRenderUtility_DrawEquipmentAiming),
 		            nameof(Patch_PawnRenderUtility_DrawEquipmentAiming.DrawBothEquipmentAiming)
 	            ));
 	            if (new_call)
 	            {
+					Log.Message("[Tacticowl] Found DualWield Call, now adding Pawn to eval stack...");
 		            // Pushes the pawn input to the stack as input for the new method.
 		            // We know that the calling method has Pawn pawn as the first argument.
 		            yield return new CodeInstruction(OpCodes.Ldarg_0);
